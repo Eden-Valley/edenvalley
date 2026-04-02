@@ -1,55 +1,37 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/i18n/LanguageContext';
 import MinimalNav from '@/components/MinimalNav';
 
 interface ResultPageProps {
   type: 'thinker' | 'doer';
 }
 
-const content = {
-  thinker: {
-    badge: '🧠',
-    title: "You're an Architect.",
-    subtitle: "You were never lazy. You were solving the wrong problem: yourself.",
-    pain: [
-      "Be honest.",
-      "How many ideas are sitting in your notes app right now? How many problems have you solved in your head — perfectly — but never shipped? How many times have you watched someone less talented than you execute a mediocre version of your idea… and succeed?",
-      "You thought the problem was discipline. Motivation. Focus. It wasn't.",
-      "The problem is that you're a Pioneer trying to be a Builder. And the world never told you that was a design flaw in its system — not in you.",
-    ],
-    relief: [
-      "They were all wrong.",
-      "The productivity gurus. The hustle culture. The 'just ship it' mantras. They were written for Builders. Not for you.",
-      "You don't need to ship faster. You need someone whose entire genius is turning your map into reality.",
-    ],
-    revelation: "You are the Pioneer. You find the valley. You draw the map. But you were never supposed to build the city.",
-    formTitle: "Deposit your map.",
-  },
-  doer: {
-    badge: '⚡',
-    title: "You're a Force of Nature.",
-    subtitle: "You were never scattered. You were aiming at the wrong target.",
-    pain: [
-      "Be honest.",
-      "How many projects have you thrown yourself into with everything you had — only to hit a wall because the vision wasn't solid enough? How many times have you outworked everyone in the room, only to realize you were building in the wrong direction?",
-      "You thought the problem was finding the right idea. The right market. The right timing. It wasn't.",
-      "The problem is that you're a Builder trying to be a Pioneer. And the world convinced you that you needed to be both.",
-    ],
-    relief: [
-      "They were all wrong.",
-      "The startup advice. The 'founder-market fit' obsession. The idea that you need a revolutionary insight before you can start building.",
-      "You don't need a better idea. You need someone whose entire genius is seeing what you can't — so you can build what they can't.",
-    ],
-    revelation: "You are the Builder. You take the map and build the empire. But you were never supposed to draw the map.",
-    formTitle: "Bring your energy.",
-  },
-};
-
 const ResultPage = ({ type }: ResultPageProps) => {
   const navigate = useNavigate();
-  const c = content[type];
+  const { t } = useLanguage();
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', vision: '' });
   const [submitting, setSubmitting] = useState(false);
+  const sectionsRef = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    sectionsRef.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -64,56 +46,61 @@ const ResultPage = ({ type }: ResultPageProps) => {
     navigate('/thanks');
   };
 
+  const pain = [t(`${type}.pain1`), t(`${type}.pain2`), t(`${type}.pain3`), t(`${type}.pain4`)];
+  const relief = [t(`${type}.relief1`), t(`${type}.relief2`), t(`${type}.relief3`)];
+
   return (
     <div className="grain-overlay min-h-screen bg-background">
       <MinimalNav />
       <div className="max-w-[680px] mx-auto px-8 py-24">
         {/* Hero */}
-        <div className="text-center pb-16 border-b border-border mb-16">
-          <div className="text-5xl mb-6">{c.badge}</div>
+        <div ref={el => sectionsRef.current[0] = el} className="scroll-reveal text-center pb-16 border-b border-border mb-16">
+          <div className="w-16 h-16 mx-auto mb-8 rounded-full border border-primary/30 flex items-center justify-center">
+            <div className="w-3 h-3 rounded-full bg-primary" style={{ animation: 'pulse-expand 2s ease-in-out infinite' }} />
+          </div>
           <h1 className="font-display text-foreground font-light mb-4" style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {c.title}
+            {t(`${type}.title`)}
           </h1>
-          <p className="font-body text-muted-foreground text-lg italic">{c.subtitle}</p>
+          <p className="font-body text-muted-foreground text-lg italic">{t(`${type}.subtitle`)}</p>
         </div>
 
         {/* Pain */}
-        <section className="mb-16 pb-16 border-b border-muted">
-          <span className="font-mono text-xs tracking-[0.3em] text-eden-crimson mb-6 block">THE PAIN</span>
-          {c.pain.map((p, i) => (
+        <section ref={el => sectionsRef.current[1] = el} className="scroll-reveal mb-16 pb-16 border-b border-muted">
+          <span className="font-mono text-xs tracking-[0.3em] text-eden-crimson mb-6 block">{t('result.thePain')}</span>
+          {pain.map((p, i) => (
             <p key={i} className="font-body text-muted-foreground leading-relaxed mb-4">{p}</p>
           ))}
         </section>
 
         {/* Relief */}
-        <section className="mb-16 pb-16 border-b border-muted">
-          <span className="font-mono text-xs tracking-[0.3em] text-primary mb-6 block">THE RELIEF</span>
-          {c.relief.map((p, i) => (
+        <section ref={el => sectionsRef.current[2] = el} className="scroll-reveal mb-16 pb-16 border-b border-muted">
+          <span className="font-mono text-xs tracking-[0.3em] text-primary mb-6 block">{t('result.theRelief')}</span>
+          {relief.map((p, i) => (
             <p key={i} className="font-body text-muted-foreground leading-relaxed mb-4">{p}</p>
           ))}
         </section>
 
         {/* Revelation */}
-        <div className="revelation-box mb-16">
+        <div ref={el => sectionsRef.current[3] = el} className="scroll-reveal revelation-box mb-16">
           <p className="font-display text-foreground text-center leading-relaxed" style={{ fontSize: '1.4rem' }}>
-            {c.revelation}
+            {t(`${type}.revelation`)}
           </p>
         </div>
 
         {/* Form */}
-        <section>
-          <h3 className="font-display text-foreground text-2xl mb-8">{c.formTitle}</h3>
+        <section ref={el => sectionsRef.current[4] = el} className="scroll-reveal">
+          <h3 className="font-display text-foreground text-2xl mb-8">{t(`${type}.formTitle`)}</h3>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <input className="eden-input" placeholder="First name" required value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} />
-              <input className="eden-input" placeholder="Last name" required value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} />
+              <input className="eden-input" placeholder={t('result.firstName')} required value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} />
+              <input className="eden-input" placeholder={t('result.lastName')} required value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} />
             </div>
-            <input className="eden-input mb-4" type="email" placeholder="Email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-            <textarea className="eden-input mb-4" rows={4} placeholder={type === 'thinker' ? "Describe your vision in a few lines..." : "What drives you? What have you built?"} value={form.vision} onChange={e => setForm({ ...form, vision: e.target.value })} />
+            <input className="eden-input mb-4" type="email" placeholder={t('result.email')} required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+            <textarea className="eden-input mb-4" rows={4} placeholder={t(`${type}.placeholder`)} value={form.vision} onChange={e => setForm({ ...form, vision: e.target.value })} />
             <button type="submit" className="eden-btn w-full" disabled={submitting}>
-              {submitting ? 'SUBMITTING...' : '🌳 ENTER THE VALLEY'}
+              {submitting ? t('result.submitting') : t('result.enterValley')}
             </button>
-            <p className="font-mono text-xs text-eden-faint text-center mt-3 tracking-wide">Access upon profile validation.</p>
+            <p className="font-mono text-xs text-eden-faint text-center mt-3 tracking-wide">{t('result.validation')}</p>
           </form>
         </section>
       </div>
