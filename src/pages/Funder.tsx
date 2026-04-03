@@ -172,8 +172,8 @@ const Funder = () => {
         {/* 0: SMART MONEY */}
         <div className={`frame-3d ${fc(0)}`}>
           <div className="max-w-6xl px-6 md:px-12 text-center">
-            <h1 className="font-display text-massive text-foreground font-extralight tracking-tighter letter-cascade-premium">SMART</h1>
-            <h1 className="font-display text-massive text-primary font-extralight tracking-tighter letter-cascade-premium stagger-2 eden-glow-pulse">MONEY</h1>
+            <h1 className="font-display text-massive text-foreground font-extralight tracking-tighter letter-cascade-premium">{t('funder.smartMoney').split(' ')[0]}</h1>
+            <h1 className="font-display text-massive text-primary font-extralight tracking-tighter letter-cascade-premium stagger-2 eden-glow-pulse">{t('funder.smartMoney').split(' ')[1]}</h1>
           </div>
         </div>
 
@@ -188,7 +188,7 @@ const Funder = () => {
         <div className={`frame-3d ${fc(2)}`}>
           <div className="max-w-5xl px-6 md:px-12 text-center">
             <span className="text-micro text-muted-foreground block mb-6 md:mb-8 reveal-up-premium">{t('funder.problem')}</span>
-            <h2 className="font-display text-impact text-eden-crimson font-bold reveal-text-premium">NOISE</h2>
+            <h2 className="font-display text-impact text-eden-crimson font-bold reveal-text-premium">{t('funder.noise')}</h2>
           </div>
         </div>
 
@@ -209,8 +209,8 @@ const Funder = () => {
         {/* 5: ACCESS */}
         <div className={`frame-3d ${fc(5)}`}>
           <div className="max-w-5xl px-6 md:px-12 text-center">
-            <span className="text-micro text-muted-foreground block mb-6 md:mb-8 reveal-up-premium">THE SOLUTION</span>
-            <h2 className="font-display text-massive text-primary font-extralight eden-glow-pulse reveal-scale-premium">ACCESS</h2>
+            <span className="text-micro text-muted-foreground block mb-6 md:mb-8 reveal-up-premium">{t('funder.theSolution')}</span>
+            <h2 className="font-display text-massive text-primary font-extralight eden-glow-pulse reveal-scale-premium">{t('funder.access')}</h2>
           </div>
         </div>
 
@@ -234,9 +234,9 @@ const Funder = () => {
         {/* 8: CURATED */}
         <div className={`frame-3d ${fc(8)}`}>
           <div className="max-w-4xl px-6 md:px-12 text-center">
-            <span className="text-micro text-muted-foreground block mb-3 md:mb-4 reveal-up-premium">CAREFULLY</span>
-            <h2 className="font-display text-impact text-foreground font-medium reveal-text-premium">CURATED</h2>
-            <h2 className="font-display text-large text-muted-foreground font-light mt-2 reveal-up-premium stagger-2">ARCHITECTS & FORCES</h2>
+            <span className="text-micro text-muted-foreground block mb-3 md:mb-4 reveal-up-premium">{t('funder.carefully')}</span>
+            <h2 className="font-display text-impact text-foreground font-medium reveal-text-premium">{t('funder.curated')}</h2>
+            <h2 className="font-display text-large text-muted-foreground font-light mt-2 reveal-up-premium stagger-2">{t('funder.architectsAndForces')}</h2>
           </div>
         </div>
 
@@ -252,7 +252,7 @@ const Funder = () => {
         {/* 10: Entry Call */}
         <div className={`frame-3d ${fc(10)}`}>
           <div className="max-w-4xl px-6 md:px-12 text-center">
-            <span className="text-micro text-muted-foreground block mb-4 md:mb-6 reveal-up-premium">INVESTOR ACCESS</span>
+            <span className="text-micro text-muted-foreground block mb-4 md:mb-6 reveal-up-premium">{t('funder.investorAccess')}</span>
             <h2 className="font-display text-large text-foreground font-medium reveal-text-premium">{t('funder.formTitle')}</h2>
           </div>
         </div>

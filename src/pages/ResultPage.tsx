@@ -176,7 +176,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
         <div className={`frame-3d ${fc(0)}`}>
           <div className="max-w-6xl px-6 md:px-12 text-center">
             <h1 className="font-display text-massive text-foreground font-extralight tracking-tighter letter-cascade-premium">
-              {isThinker ? 'ARCHITECT' : 'FORCE'}
+              {isThinker ? t('result.architect') : t('result.force')}
             </h1>
           </div>
         </div>
@@ -213,7 +213,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
         <div className={`frame-3d ${fc(4)}`}>
           <div className="max-w-4xl px-6 md:px-12 text-center">
             <h2 className="font-display text-impact text-eden-crimson font-bold reveal-text-premium stagger-1">
-              {isThinker ? 'WRONG TARGET' : 'WRONG VISION'}
+              {isThinker ? t('result.wrongTarget') : t('result.wrongVision')}
             </h2>
             <p className="font-body text-whisper text-muted-foreground mt-6 md:mt-8 leading-relaxed reveal-up-premium stagger-3">
               {t(`${type}.pain3`)}
@@ -253,7 +253,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
         <div className={`frame-3d ${fc(8)}`}>
           <div className="max-w-4xl px-6 md:px-12 text-center">
             <h2 className="font-display text-impact text-primary font-bold reveal-text-premium stagger-1">
-              {isThinker ? 'CLARITY' : 'MOMENTUM'}
+              {isThinker ? t('result.clarity') : t('result.momentum')}
             </h2>
             <p className="font-body text-whisper text-muted-foreground mt-6 leading-relaxed reveal-up-premium stagger-3">
               {t(`${type}.relief3`)}
@@ -273,9 +273,9 @@ const ResultPage = ({ type }: ResultPageProps) => {
         {/* 10: Awaits */}
         <div className={`frame-3d ${fc(10)}`}>
           <div className="max-w-5xl px-6 md:px-12 text-center">
-            <span className="text-micro text-muted-foreground block mb-4 md:mb-6 reveal-up-premium stagger-1">EDEN VALLEY</span>
+            <span className="text-micro text-muted-foreground block mb-4 md:mb-6 reveal-up-premium stagger-1">{t('result.edenValley')}</span>
             <h2 className="font-display text-massive text-primary font-extralight tracking-tighter reveal-scale-premium stagger-2 eden-glow-pulse">
-              AWAITS
+              {t('result.awaits')}
             </h2>
           </div>
         </div>

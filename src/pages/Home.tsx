@@ -141,7 +141,7 @@ const Home = () => {
       {activeFrame === 0 && !hasScrolled && (
         <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2">
           <div className="w-[1px] h-8 bg-gradient-to-b from-transparent to-eden-dim" />
-          <span className="text-eden-dim text-xs tracking-[0.3em] uppercase" style={{ animation: 'bounce-fade 2s ease-in-out infinite' }}>Scroll</span>
+          <span className="text-eden-dim text-xs tracking-[0.3em] uppercase" style={{ animation: 'bounce-fade 2s ease-in-out infinite' }}>{t('home.scroll')}</span>
         </div>
       )}
 
