@@ -1,23 +1,34 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import MinimalNav from '@/components/MinimalNav';
+import CustomCursor from '@/components/CustomCursor';
+import ParticleField from '@/components/ParticleField';
 import { useScrollSound } from '@/hooks/useScrollSound';
+import { Volume2, VolumeX } from 'lucide-react';
 
 const RoleChoice = () => {
   const { t } = useLanguage();
-  const { playSound } = useScrollSound();
+  const { playSound, isMuted, toggleMute } = useScrollSound();
 
   return (
-    <div className="grain-overlay min-h-screen bg-background flex flex-col items-center justify-center p-8">
+    <div className="grain-overlay min-h-screen bg-background flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
+      <CustomCursor />
       <MinimalNav />
 
-      {/* Ambient light */}
-      <div className="absolute w-[500px] h-[500px] rounded-full opacity-20 pointer-events-none"
-        style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%)', animation: 'loading-breathe 4s ease-in-out infinite' }} />
+      <button onClick={toggleMute} className="sound-toggle" aria-label={isMuted ? "Unmute" : "Mute"}>
+        {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+      </button>
 
-      <h1 className="font-display text-foreground font-light tracking-[0.1em] mb-16 reveal-text relative" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+      <ParticleField scrollVelocity={0.5} isScrolling={false} activeFrame={0} />
+
+      {/* Ambient light */}
+      <div className="absolute w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full opacity-15 pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 70%)', animation: 'loading-breathe 5s ease-in-out infinite' }} />
+
+      <h1 className="font-display text-foreground font-extralight tracking-[0.15em] mb-12 md:mb-16 text-center" style={{ fontSize: 'clamp(1.3rem, 3vw, 2.5rem)', animation: 'reveal-text 1s cubic-bezier(0.16, 1, 0.3, 1) both' }}>
         {t('role.title')}
       </h1>
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] max-w-[900px] w-full relative">
         <Link 
           to="/test" 
@@ -25,12 +36,12 @@ const RoleChoice = () => {
           onMouseEnter={() => playSound('click')}
           onClick={() => playSound('choice')}
         >
-          <span className="text-2xl mb-6 text-primary font-display">◎</span>
-          <h2 className="font-body text-xs tracking-[0.3em] mb-4 text-foreground">{t('role.found')}</h2>
-          <p className="font-body text-sm text-muted-foreground leading-relaxed flex-1 whitespace-pre-line">
+          <span className="text-2xl mb-4 md:mb-6 text-primary font-display">◎</span>
+          <h2 className="font-body text-xs tracking-[0.3em] mb-3 md:mb-4 text-foreground">{t('role.found')}</h2>
+          <p className="font-body text-xs md:text-sm text-muted-foreground leading-relaxed flex-1 whitespace-pre-line">
             {t('role.foundDesc')}
           </p>
-          <span className="font-mono text-xs text-primary mt-8 tracking-[0.15em]">{t('role.foundCta')} →</span>
+          <span className="font-mono text-xs text-primary mt-6 md:mt-8 tracking-[0.15em]">{t('role.foundCta')} →</span>
         </Link>
         <Link 
           to="/funder" 
@@ -38,12 +49,12 @@ const RoleChoice = () => {
           onMouseEnter={() => playSound('click')}
           onClick={() => playSound('choice')}
         >
-          <span className="text-2xl mb-6 text-primary font-display">◈</span>
-          <h2 className="font-body text-xs tracking-[0.3em] mb-4 text-foreground">{t('role.fund')}</h2>
-          <p className="font-body text-sm text-muted-foreground leading-relaxed flex-1 whitespace-pre-line">
+          <span className="text-2xl mb-4 md:mb-6 text-primary font-display">◈</span>
+          <h2 className="font-body text-xs tracking-[0.3em] mb-3 md:mb-4 text-foreground">{t('role.fund')}</h2>
+          <p className="font-body text-xs md:text-sm text-muted-foreground leading-relaxed flex-1 whitespace-pre-line">
             {t('role.fundDesc')}
           </p>
-          <span className="font-mono text-xs text-primary mt-8 tracking-[0.15em]">{t('role.fundCta')} →</span>
+          <span className="font-mono text-xs text-primary mt-6 md:mt-8 tracking-[0.15em]">{t('role.fundCta')} →</span>
         </Link>
       </div>
     </div>

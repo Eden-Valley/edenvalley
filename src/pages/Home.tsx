@@ -6,9 +6,8 @@ import { useScrollVelocity } from '@/hooks/useScrollVelocity';
 import ParticleField from '@/components/ParticleField';
 import { Volume2, VolumeX } from 'lucide-react';
 
-const TOTAL_FRAMES = 12;
-const COOLDOWN_DURATION = 1500; // ms between frame changes
-const QUOTE_MIN_DURATION = 3500; // ms for quote frame
+const TOTAL_FRAMES = 14;
+const COOLDOWN_BASE = 1200;
 
 const Home = () => {
   const [activeFrame, setActiveFrame] = useState(0);
@@ -20,22 +19,24 @@ const Home = () => {
   const cooldownRef = useRef(false);
   const touchStartY = useRef(0);
 
+  // Frame-specific cooldowns for pacing
+  const getCooldown = (index: number) => {
+    if (index === 7) return 2500; // Quote frame — linger
+    if (index === 12) return 3000; // "No more" — dramatic hold
+    return COOLDOWN_BASE;
+  };
+
   const goToFrame = useCallback((index: number) => {
     if (cooldownRef.current) return;
     if (index < 0 || index >= TOTAL_FRAMES) return;
 
-    // Special case for quote frame (index 6)
-    const cooldown = index === 6 ? QUOTE_MIN_DURATION : COOLDOWN_DURATION;
-
     cooldownRef.current = true;
     setActiveFrame(index);
     
-    // Music intensity based on narrative: low for pain frames (0-7), high for revelation/CTA (8+)
-    const intensity = index <= 7 ? 0.2 : 0.9;
+    const intensity = index <= 8 ? 0.2 + (index * 0.05) : 0.9;
     setMusicIntensity(intensity);
     
-    // Synchronized audio for "no more" (index 10)
-    if (index === 10) {
+    if (index === 12) {
       playSound('power');
     } else {
       playTransitionSound(index);
@@ -45,26 +46,19 @@ const Home = () => {
 
     setTimeout(() => {
       cooldownRef.current = false;
-    }, cooldown);
-  }, [playTransitionSound, playSound]);
+    }, getCooldown(index));
+  }, [playTransitionSound, playSound, setMusicIntensity]);
 
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-    if (Math.abs(e.deltaY) < 30) return; // Ignore small scrolls
-    
-    if (e.deltaY > 0) {
-      goToFrame(activeFrame + 1);
-    } else {
-      goToFrame(activeFrame - 1);
-    }
+    if (Math.abs(e.deltaY) < 25) return;
+    if (e.deltaY > 0) goToFrame(activeFrame + 1);
+    else goToFrame(activeFrame - 1);
   }, [activeFrame, goToFrame]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // Skip if user is typing in an input/textarea
     const target = e.target as HTMLElement;
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return;
-    }
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return;
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
       e.preventDefault();
       goToFrame(activeFrame + 1);
@@ -80,16 +74,11 @@ const Home = () => {
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     e.preventDefault();
-    const touchEndY = e.touches[0].clientY;
-    const deltaY = touchStartY.current - touchEndY;
-
-    if (Math.abs(deltaY) > 50) {
-      if (deltaY > 0) {
-        goToFrame(activeFrame + 1);
-      } else {
-        goToFrame(activeFrame - 1);
-      }
-      touchStartY.current = touchEndY; // Reset to prevent multiple triggers
+    const deltaY = touchStartY.current - e.touches[0].clientY;
+    if (Math.abs(deltaY) > 40) {
+      if (deltaY > 0) goToFrame(activeFrame + 1);
+      else goToFrame(activeFrame - 1);
+      touchStartY.current = e.touches[0].clientY;
     }
   }, [activeFrame, goToFrame]);
 
@@ -99,7 +88,6 @@ const Home = () => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
-
     return () => {
       document.documentElement.classList.remove('home-page');
       window.removeEventListener('wheel', handleWheel);
@@ -109,208 +97,216 @@ const Home = () => {
     };
   }, [handleWheel, handleKeyDown, handleTouchStart, handleTouchMove]);
 
-  const getFrameClass = (i: number) => {
+  const fc = (i: number) => {
     if (i === activeFrame) return 'active';
     if (i < activeFrame) return 'prev';
     return 'next';
   };
 
+  // Dynamic background based on frame
+  const getBgClass = () => {
+    if (activeFrame >= 9 && activeFrame <= 11) return 'frame-bg-crimson';
+    if (activeFrame === 12) return '';
+    if (activeFrame === 13) return 'frame-bg-eden';
+    return '';
+  };
+
   return (
-    <div className="fixed inset-0 bg-background overflow-hidden">
-      {/* Ambient particles - responsive to scroll speed (simulated via transitions) */}
-      <ParticleField 
-        scrollVelocity={isScrolling ? velocity : 0.5}
-        isScrolling={cooldownRef.current}
-        activeFrame={activeFrame}
-      />
+    <div className={`fixed inset-0 bg-background overflow-hidden transition-colors duration-[2000ms] ${getBgClass()}`}>
+      <ParticleField scrollVelocity={isScrolling ? velocity : 0.5} isScrolling={cooldownRef.current} activeFrame={activeFrame} />
       
-      {/* Progress indicator */}
-      <div className="fixed top-0 left-0 w-full h-[1px] bg-primary/20 z-50">
-        <div 
-          className="h-full bg-primary transition-all duration-1000 ease-in-out"
-          style={{ width: `${((activeFrame + 1) / TOTAL_FRAMES) * 100}%` }}
-        />
+      {/* Progress */}
+      <div className="fixed top-0 left-0 w-full h-[1px] bg-primary/10 z-50">
+        <div className="h-full bg-primary/60 transition-all duration-1000 ease-out" style={{ width: `${((activeFrame + 1) / TOTAL_FRAMES) * 100}%` }} />
       </div>
 
-      {/* Sound Toggle */}
-      <button 
-        onClick={toggleMute}
-        className="fixed top-6 right-6 z-50 p-2 rounded-full border border-border bg-background/50 backdrop-blur-sm text-foreground hover:bg-accent transition-colors"
-        aria-label={isMuted ? "Unmute" : "Mute"}
-      >
-        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+      {/* Sound */}
+      <button onClick={toggleMute} className="sound-toggle" aria-label={isMuted ? "Unmute" : "Mute"}>
+        {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
       </button>
 
-      {/* Audio Error Display */}
       {audioError && (
-        <div className="fixed top-20 right-6 z-50 max-w-xs p-3 bg-destructive/10 border border-destructive/30 rounded backdrop-blur-sm">
+        <div className="fixed top-16 right-6 z-50 max-w-xs p-3 bg-destructive/10 border border-destructive/30 rounded backdrop-blur-sm">
           <p className="text-destructive text-xs">{audioError}</p>
         </div>
       )}
 
-      {/* Audio started indicator */}
       {hasStarted && (
-        <div className="fixed bottom-6 right-6 z-50 text-primary/60 animate-pulse">
-          <span className="text-xs tracking-widest">♪</span>
+        <div className="fixed bottom-6 right-6 z-50 text-primary/40">
+          <span className="text-xs tracking-widest animate-pulse">♪</span>
         </div>
       )}
 
       {/* Scroll hint */}
       {activeFrame === 0 && !hasScrolled && (
-        <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2 text-eden-dim text-sm z-40 animate-pulse">
-          <span className="block text-center">Scroll to explore</span>
+        <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2">
+          <div className="w-[1px] h-8 bg-gradient-to-b from-transparent to-eden-dim" />
+          <span className="text-eden-dim text-xs tracking-[0.3em] uppercase" style={{ animation: 'bounce-fade 2s ease-in-out infinite' }}>Scroll</span>
         </div>
       )}
 
       <div className="sticky-stage">
-        {/* Frame 1 */}
-        <div className={`frame ${getFrameClass(0)}`}>
-          <div className="max-w-4xl px-8 flex flex-col items-center">
-            <p className="font-display text-foreground font-light tracking-tight leading-[1.15] reveal-text font-dynamic" style={{ fontSize: 'clamp(2rem, 8vw, 6rem)' }}>
+        
+        {/* Frame 0: Opening — massive single line */}
+        <div className={`frame ${fc(0)}`}>
+          <div className="max-w-5xl px-6 md:px-12">
+            <p className="font-display text-foreground font-extralight tracking-tight leading-[0.9] text-morph-in" style={{ fontSize: 'clamp(2.5rem, 10vw, 8rem)' }}>
               {t('home.f1')}
             </p>
-            <span className="mt-12 text-eden-dim text-lg circular-rotation" style={{ animation: 'bounce-fade 2s ease-in-out infinite' }}>▼</span>
           </div>
         </div>
 
-        {/* Frame 2 */}
-        <div className={`frame ${getFrameClass(1)}`}>
-          <div className="max-w-4xl px-8">
-            <p className="font-display text-foreground font-light tracking-tight leading-[1.15] reveal-text font-dynamic" style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}>
+        {/* Frame 1: Build the road */}
+        <div className={`frame ${fc(1)}`}>
+          <div className="max-w-5xl px-6 md:px-12">
+            <p className="font-display text-foreground font-extralight tracking-tight leading-[0.9] text-morph-in" style={{ fontSize: 'clamp(2.5rem, 10vw, 8rem)' }}>
               {t('home.f2')}
             </p>
           </div>
         </div>
 
-        {/* Frame 3 */}
-        <div className={`frame ${getFrameClass(2)}`}>
-          <div className="max-w-5xl px-8">
-            <p className="font-display text-foreground font-light tracking-tight leading-[1.1] reveal-text font-dynamic" style={{ fontSize: 'clamp(2.5rem, 9vw, 8rem)' }}>
+        {/* Frame 2: Almost nobody — massive impact */}
+        <div className={`frame ${fc(2)}`}>
+          <div className="max-w-6xl px-6 md:px-12">
+            <p className="font-display text-foreground font-bold tracking-tighter leading-[0.85] reveal-scale" style={{ fontSize: 'clamp(3rem, 14vw, 12rem)' }}>
               {t('home.f3')}
             </p>
           </div>
         </div>
 
-        {/* Frame 4 */}
-        <div className={`frame ${getFrameClass(3)}`}>
-          <div className="max-w-3xl px-8 space-y-6">
-            <p className="font-display text-foreground font-light tracking-tight leading-[1.15] reveal-text font-dynamic" style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}>
-              {t('home.f4a')}<br />
-              <span className="text-muted-foreground block mt-8 text-[0.4em] tracking-normal leading-relaxed reveal-up">{t('home.f4b')}</span>
+        {/* Frame 3: Not a bug — split reveal */}
+        <div className={`frame ${fc(3)}`}>
+          <div className="max-w-4xl px-6 md:px-12 space-y-8">
+            <p className="font-display text-foreground font-light tracking-tight leading-[1.1] reveal-split-left stagger-1" style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}>
+              {t('home.f4a')}
+            </p>
+            <p className="font-body text-muted-foreground text-sm md:text-base leading-relaxed reveal-split-right stagger-3 max-w-lg mx-auto">
+              {t('home.f4b')}
             </p>
           </div>
         </div>
 
-        {/* Frame 5 - Woz & Jobs */}
-        <div className={`frame ${getFrameClass(4)}`}>
-          <div className="max-w-3xl px-8 space-y-12">
-            <div className="group relative">
-              <p className="font-display tracking-tight leading-[1.15] reveal-up cursor-help" style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
-                <span className="text-foreground font-semibold block mb-4">{t('home.f5.woz')}</span>
-                <span className="text-eden-dim text-[0.5em] tracking-normal block leading-relaxed">{t('home.f5.wozSub')}</span>
-              </p>
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 p-4 bg-card border border-border rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none text-sm text-muted-foreground shadow-2xl">
-                Steve Wozniak was the technical pioneer who built the first Apple computers by hand.
-              </div>
-            </div>
-            <div className="group relative">
-              <p className="font-display tracking-tight leading-[1.15] reveal-up cursor-help" style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)', animationDelay: '0.15s' }}>
-                <span className="text-foreground font-semibold block mb-4">{t('home.f5.jobs')}</span>
-                <span className="text-eden-dim text-[0.5em] tracking-normal block leading-relaxed">{t('home.f5.jobsSub')}</span>
-              </p>
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 p-4 bg-card border border-border rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none text-sm text-muted-foreground shadow-2xl">
-                Steve Jobs was the visionary builder who saw the potential to change the world with Woz's inventions.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Frame 6 - Analogies */}
-        <div className={`frame ${getFrameClass(5)}`}>
-          <div className="max-w-3xl px-8 space-y-12 text-left md:text-center">
-            <div className="space-y-8">
-              <div className="group relative">
-                <p className="font-display tracking-tight leading-[1.15] reveal-up cursor-help" style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
-                  <span className="text-foreground font-semibold block mb-4">{t('home.f6.walt')}</span>
-                  <span className="text-eden-dim text-[0.5em] tracking-normal block leading-relaxed">{t('home.f6.waltSub')}</span>
-                </p>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 p-4 bg-card border border-border rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none text-sm text-muted-foreground shadow-2xl">
-                  Walt was the visionary dreamer who imagined Disneyland and the characters.
-                </div>
-              </div>
-              <div className="group relative">
-                <p className="font-display tracking-tight leading-[1.15] reveal-up cursor-help" style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)', animationDelay: '0.15s' }}>
-                  <span className="text-foreground font-semibold block mb-4">{t('home.f6.roy')}</span>
-                  <span className="text-eden-dim text-[0.5em] tracking-normal block leading-relaxed">{t('home.f6.roySub')}</span>
-                </p>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 p-4 bg-card border border-border rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none text-sm text-muted-foreground shadow-2xl">
-                  Roy was the financial genius who turned Walt's dreams into a sustainable business empire.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Frame 7 - The Quote (NEW) */}
-        <div className={`frame ${getFrameClass(6)}`}>
-          <div className="max-w-4xl px-8 text-center">
-            <p className="font-display text-foreground font-light italic tracking-tight leading-relaxed reveal-up" style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.8rem)' }}>
-              {t('home.f6.quote1')}<br />
-              <span className="text-eden-green block mt-6 not-italic font-semibold">{t('home.f6.quote2')}</span>
+        {/* Frame 4: Wozniak — left aligned, dramatic */}
+        <div className={`frame ${fc(4)}`}>
+          <div className="max-w-5xl w-full px-6 md:px-12 text-left md:text-center">
+            <p className="font-display text-foreground font-bold tracking-tighter leading-none letter-cascade stagger-1" style={{ fontSize: 'clamp(3rem, 10vw, 8rem)' }}>
+              {t('home.f5.woz')}
+            </p>
+            <p className="font-body text-muted-foreground mt-4 md:mt-6 text-sm md:text-base leading-relaxed reveal-up stagger-3 max-w-md mx-auto md:mx-auto">
+              {t('home.f5.wozSub')}
             </p>
           </div>
         </div>
 
-        {/* Frame 8 - red tint */}
-        <div className={`frame ${getFrameClass(7)}`} style={activeFrame === 7 ? { background: 'radial-gradient(ellipse at center, #1a0505 0%, hsl(0,0%,4%) 70%)' } : {}}>
-          <div className="max-w-5xl px-8">
-            <p className="font-display text-foreground font-light tracking-tight leading-[1.1] reveal-text font-dynamic" style={{ fontSize: 'clamp(2.5rem, 9vw, 8rem)' }}>
+        {/* Frame 5: Jobs — contrasting style */}
+        <div className={`frame ${fc(5)}`}>
+          <div className="max-w-5xl w-full px-6 md:px-12 text-right md:text-center">
+            <p className="font-display text-foreground font-bold tracking-tighter leading-none letter-cascade stagger-1" style={{ fontSize: 'clamp(3rem, 10vw, 8rem)' }}>
+              {t('home.f5.jobs')}
+            </p>
+            <p className="font-body text-muted-foreground mt-4 md:mt-6 text-sm md:text-base leading-relaxed reveal-up stagger-3 max-w-md ml-auto md:mx-auto">
+              {t('home.f5.jobsSub')}
+            </p>
+          </div>
+        </div>
+
+        {/* Frame 6: Walt & Roy — overlapping text */}
+        <div className={`frame ${fc(6)}`}>
+          <div className="max-w-4xl px-6 md:px-12 space-y-6">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12">
+              <p className="font-display text-foreground font-semibold tracking-tight reveal-split-left stagger-1" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+                {t('home.f6.walt')}
+              </p>
+              <span className="text-eden-dim font-mono text-xs tracking-widest reveal-scale stagger-2">&</span>
+              <p className="font-display text-foreground font-semibold tracking-tight reveal-split-right stagger-3" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+                {t('home.f6.roy')}
+              </p>
+            </div>
+            <p className="font-body text-muted-foreground text-sm md:text-base leading-relaxed reveal-up stagger-5 max-w-lg mx-auto text-center">
+              {t('home.f6.waltSub')}
+            </p>
+          </div>
+        </div>
+
+        {/* Frame 7: The Quote — breathing, centered */}
+        <div className={`frame ${fc(7)} frame-bg-warm`}>
+          <div className="max-w-3xl px-6 md:px-12 text-center">
+            <p className="font-display text-foreground font-light italic leading-relaxed reveal-text stagger-1" style={{ fontSize: 'clamp(1.3rem, 3vw, 2.5rem)', animation: activeFrame === 7 ? 'breathe-scale 4s ease-in-out infinite' : undefined }}>
+              {t('home.f6.quote1')}
+            </p>
+            <p className="font-display text-primary font-semibold not-italic mt-6 reveal-up stagger-3" style={{ fontSize: 'clamp(1.5rem, 3.5vw, 3rem)' }}>
+              {t('home.f6.quote2')}
+            </p>
+          </div>
+        </div>
+
+        {/* Frame 8: But society forgot — massive, dark */}
+        <div className={`frame ${fc(8)} frame-bg-deep`}>
+          <div className="max-w-6xl px-6 md:px-12">
+            <p className="font-display text-foreground font-extralight tracking-tighter leading-[0.85] reveal-scale-massive" style={{ fontSize: 'clamp(3rem, 12vw, 10rem)' }}>
               {t('home.f7')}
             </p>
           </div>
         </div>
 
-        {/* Frame 9 */}
-        <div className={`frame ${getFrameClass(8)}`} style={activeFrame === 8 ? { background: 'radial-gradient(ellipse at center, #1a0505 0%, hsl(0,0%,4%) 70%)' } : {}}>
-          <div className="max-w-3xl px-8">
-            <p className="font-display text-foreground font-light tracking-tight leading-relaxed whitespace-pre-line reveal-text font-dynamic" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.8rem)' }}>
-              {t('home.f8a')}<br />
-              <span className="block mt-6">{t('home.f8b')}</span><br />
-              <span className="text-muted-foreground block mt-8 italic text-[0.7em]">{t('home.f8c')}</span>
+        {/* Frame 9: Mapmakers/Bricks — crimson tint, staggered lines */}
+        <div className={`frame ${fc(9)} frame-bg-crimson`}>
+          <div className="max-w-3xl px-6 md:px-12 space-y-4 text-center">
+            <p className="font-display text-foreground font-light leading-relaxed reveal-split-left stagger-1" style={{ fontSize: 'clamp(1.3rem, 3vw, 2.2rem)' }}>
+              {t('home.f8a')}
+            </p>
+            <p className="font-display text-foreground font-light leading-relaxed reveal-split-right stagger-2" style={{ fontSize: 'clamp(1.3rem, 3vw, 2.2rem)' }}>
+              {t('home.f8b')}
+            </p>
+            <p className="font-display text-muted-foreground italic mt-8 reveal-up stagger-4" style={{ fontSize: 'clamp(1rem, 2vw, 1.6rem)' }}>
+              {t('home.f8c')}
             </p>
           </div>
         </div>
 
-        {/* Frame 10 */}
-        <div className={`frame ${getFrameClass(9)}`}>
-          <div className="max-w-4xl px-8">
-            <p className="font-display text-foreground font-light italic tracking-tight leading-[1.15] reveal-text font-dynamic" style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}>
-              {t('home.f9a')}<br />
-              <span className="text-eden-crimson block mt-8 not-italic font-bold tracking-widest uppercase">{t('home.f9b')}</span>
+        {/* Frame 10: Burnout — crimson pulse */}
+        <div className={`frame ${fc(10)} frame-bg-crimson`}>
+          <div className="max-w-4xl px-6 md:px-12 text-center">
+            <p className="font-display text-foreground font-light italic leading-[1.2] reveal-text stagger-1" style={{ fontSize: 'clamp(1.8rem, 5vw, 4rem)' }}>
+              {t('home.f9a')}
+            </p>
+            <p className="font-display text-eden-crimson font-black tracking-[0.2em] uppercase mt-8 reveal-scale stagger-3 crimson-glow" style={{ fontSize: 'clamp(1.2rem, 3vw, 2rem)' }}>
+              {t('home.f9b')}
             </p>
           </div>
         </div>
 
-        {/* Frame 11 - white flash */}
-        <div className={`frame ${getFrameClass(10)} ${activeFrame === 10 ? 'white-flash' : ''}`}>
-          <div className="max-w-full px-8">
-            <p className="font-display font-bold tracking-tighter leading-none reveal-text no-more-text" style={{ fontSize: 'clamp(4rem, 18vw, 18rem)', color: activeFrame === 10 ? '#0A0A0A' : undefined }}>
+        {/* Frame 11: Pause — breathing darkness before the flash */}
+        <div className={`frame ${fc(11)} frame-bg-deep`}>
+          <div className="flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-foreground/20 reveal-scale" style={{ animation: activeFrame === 11 ? 'pulse-expand 2s ease-in-out infinite' : undefined }} />
+          </div>
+        </div>
+
+        {/* Frame 12: NO MORE — white flash */}
+        <div className={`frame ${fc(12)} ${activeFrame === 12 ? 'white-flash' : ''}`}>
+          <div className="max-w-full px-4">
+            <p className="font-display font-black tracking-tighter leading-none no-more-text" style={{
+              fontSize: 'clamp(5rem, 22vw, 22rem)',
+              color: activeFrame === 12 ? '#0A0A0A' : undefined,
+              transition: 'color 0.3s ease'
+            }}>
               {t('home.f10')}
             </p>
           </div>
         </div>
 
-        {/* Frame 12 - CTA */}
-        <div className={`frame ${getFrameClass(11)}`}>
-          <div className="flex flex-col items-center max-w-2xl px-8">
-            <p className="font-display text-foreground tracking-[0.4em] leading-tight reveal-text text-center font-dynamic" style={{ fontSize: 'clamp(2rem, 5vw, 5rem)', animation: 'glow-pulse 3s ease-in-out infinite' }}>
+        {/* Frame 13: CTA — Eden Valley */}
+        <div className={`frame ${fc(13)} frame-bg-eden`}>
+          <div className="flex flex-col items-center max-w-2xl px-6 md:px-8">
+            <p className="font-display text-foreground tracking-[0.3em] md:tracking-[0.5em] leading-tight text-morph-in text-center" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', animation: activeFrame === 13 ? 'glow-pulse 3s ease-in-out infinite' : undefined }}>
               {t('home.edenValley')}
             </p>
-            <div className="w-[100px] h-[1px] bg-primary/40 my-10 reveal-up" style={{ animationDelay: '0.2s' }} />
-            <Link to="/role" className="eden-btn mt-6 reveal-up px-16 py-5 text-xl tracking-widest" style={{ animationDelay: '0.3s' }}>
+            <div className="w-[80px] md:w-[120px] h-[1px] bg-primary/40 my-8 md:my-10 line-expand stagger-2" />
+            <Link to="/role" className="eden-btn reveal-up stagger-3 px-10 md:px-16 py-4 md:py-5 text-base md:text-lg tracking-[0.2em]">
               {t('home.cta')}
             </Link>
-            <p className="font-body text-muted-foreground mt-10 text-base max-w-md reveal-up text-center leading-relaxed" style={{ animationDelay: '0.4s' }}>
+            <p className="font-body text-muted-foreground mt-8 md:mt-10 text-sm max-w-md reveal-up stagger-4 text-center leading-relaxed">
               {t('home.sub')}
             </p>
           </div>
