@@ -104,3 +104,14 @@ export const getInvitationNetwork = async (userId: string) => {
     return [];
   }
 };
+
+// Get total user count for display
+export const getUserCount = async () => {
+  try {
+    const result = await sql`SELECT COUNT(*) as count FROM users`;
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error("Failed to get user count:", error);
+    return 0;
+  }
+};

@@ -8,7 +8,7 @@ import ParticleField from '@/components/ParticleField';
 import { useScrollSound } from '@/hooks/useScrollSound';
 import { useScrollVelocity } from '@/hooks/useScrollVelocity';
 import { Volume2, VolumeX } from 'lucide-react';
-import { sql } from '@/lib/db';
+import { sql, getUserCount } from '@/lib/db';
 import { z } from 'zod';
 
 const funderSchema = z.object({
@@ -33,9 +33,19 @@ const Funder = () => {
   const [form, setForm] = useState({ investorType: '', stage: '', sectors: '', ticketSize: '', email: '', firstName: '', lastName: '' });
   const [submitting, setSubmitting] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [userCount, setUserCount] = useState(0);
   
   const cooldownRef = useRef(false);
   const touchStartY = useRef(0);
+
+  // Fetch user count on mount
+  useEffect(() => {
+    const fetchCount = async () => {
+      const count = await getUserCount();
+      setUserCount(count);
+    };
+    fetchCount();
+  }, []);
 
   const goToFrame = useCallback((index: number) => {
     if (cooldownRef.current) return;
@@ -213,11 +223,11 @@ const Funder = () => {
           </div>
         </div>
 
-        {/* 7: 50+ */}
+        {/* 7: Dynamic User Count */}
         <div className={`frame-3d ${fc(7)}`}>
           <div className="max-w-5xl px-6 md:px-12 text-center">
-            <h2 className="font-display text-massive text-primary font-bold reveal-scale-premium eden-glow-pulse">50+</h2>
-            <span className="text-micro text-muted-foreground block mt-4 reveal-up-premium stagger-2">FOUNDERS</span>
+            <h2 className="font-display text-massive text-primary font-bold reveal-scale-premium eden-glow-pulse">{userCount}</h2>
+            <span className="text-micro text-muted-foreground block mt-4 reveal-up-premium stagger-2">{t('funder.founders')}</span>
           </div>
         </div>
 
