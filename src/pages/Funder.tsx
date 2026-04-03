@@ -32,6 +32,7 @@ const Funder = () => {
   const [activeFrame, setActiveFrame] = useState(0);
   const [form, setForm] = useState({ investorType: '', stage: '', sectors: '', ticketSize: '', email: '', firstName: '', lastName: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [userCount, setUserCount] = useState(0);
   
@@ -108,9 +109,13 @@ const Funder = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
     playSound('submit');
     const validation = funderSchema.safeParse(form);
-    if (!validation.success) return;
+    if (!validation.success) {
+      setSubmitError('Please fill all required fields correctly.');
+      return;
+    }
     setSubmitting(true);
     try {
       await sql`INSERT INTO users (email, first_name, last_name, role) VALUES (${form.email}, ${form.firstName}, ${form.lastName}, 'funder') ON CONFLICT (email) DO UPDATE SET first_name = EXCLUDED.first_name, last_name = EXCLUDED.last_name, role = EXCLUDED.role`;
@@ -123,7 +128,7 @@ const Funder = () => {
       playSound('success');
       navigate('/funder-thanks');
     } catch {
-      // Silent fail - no user data logged
+      setSubmitError('Submission failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -261,6 +266,11 @@ const Funder = () => {
         <div className={`frame-3d ${fc(11)}`}>
           <div className="max-w-lg w-full px-4 md:px-8 mx-auto h-full flex flex-col justify-center form-frame-scrollable py-12 md:py-24">
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4 reveal-up-premium">
+              {submitError && (
+                <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded">
+                  <p className="text-destructive text-sm">{submitError}</p>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-micro text-muted-foreground block ml-1">{t('result.firstName')}</label>
