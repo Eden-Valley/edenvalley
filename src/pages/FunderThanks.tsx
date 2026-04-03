@@ -10,7 +10,7 @@ const FunderThanks = () => {
   const { isMuted, toggleMute } = useScrollSound();
 
   return (
-    <div className="grain-overlay min-h-screen bg-background flex flex-col items-center justify-center px-4 md:px-8 relative overflow-hidden">
+    <div className="grain-overlay min-h-[100dvh] bg-background flex flex-col items-center justify-center px-4 md:px-8 relative overflow-hidden">
       <CustomCursor />
       <MinimalNav />
       <button onClick={toggleMute} className="sound-toggle" aria-label={isMuted ? "Unmute" : "Mute"}>

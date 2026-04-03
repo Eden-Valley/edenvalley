@@ -79,12 +79,9 @@ export class AudioEngine {
 
       this.state.isInitialized = true;
       this.emitStateChange();
-      
-      console.log('[AudioEngine] Initialized with strict routing');
       return true;
-    } catch (err) {
-      console.error('[AudioEngine] Initialization failed:', err);
-      this.state.error = err instanceof Error ? err.message : 'Unknown error';
+    } catch {
+      this.state.error = 'Initialization failed';
       this.emitStateChange();
       return false;
     }
@@ -112,15 +109,11 @@ export class AudioEngine {
         this.state.isRunning = true;
         this.emitStateChange();
         
-        // Sauvegarder que l'audio a démarré
         sessionStorage.setItem('eden-audio-started', 'true');
-        
-        console.log('[AudioEngine] Started');
         return true;
       }
       return false;
     } catch (err) {
-      console.error('[AudioEngine] Start failed:', err);
       return false;
     }
   }
@@ -341,7 +334,6 @@ export class AudioEngine {
     };
     
     this.emitStateChange();
-    console.log('[AudioEngine] Disposed');
   }
 
   // ==================== PRIVATE METHODS ====================

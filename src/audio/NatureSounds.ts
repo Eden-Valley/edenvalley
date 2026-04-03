@@ -73,12 +73,10 @@ export class NatureSounds {
   enable(): void {
     if (this.isEnabled) return;
     if (!audioEngine.isReady()) {
-      console.warn('[NatureSounds] AudioEngine not ready');
       return;
     }
 
     this.isEnabled = true;
-    console.log('[NatureSounds] Enabled - birds, wind, water ambiance');
 
     this.startWindAmbiance();
     // Rivière désactivée - on garde juste le vent
@@ -132,8 +130,6 @@ export class NatureSounds {
         }, 1500);
       }
     }
-
-    console.log('[NatureSounds] Disabled');
   }
 
   /**

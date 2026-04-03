@@ -12,13 +12,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Système Audio Eden Valley', () => {
   test.beforeEach(async ({ page }) => {
-    // Intercepter les console logs pour vérifier l'audio
-    page.on('console', msg => {
-      if (msg.text().includes('[Audio') || msg.text().includes('AudioEngine')) {
-        console.log(`[Browser Console] ${msg.type()}: ${msg.text()}`);
-      }
-    });
-    
     await page.goto('/');
     // Attendre que la page soit chargée
     await page.waitForLoadState('networkidle');

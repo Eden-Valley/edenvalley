@@ -11,7 +11,7 @@ const RoleChoice = () => {
   const { playSound, isMuted, toggleMute } = useScrollSound();
 
   return (
-    <div className="grain-overlay min-h-screen bg-background flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
+    <div className="grain-overlay min-h-[100dvh] bg-background flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
       <CustomCursor />
       <MinimalNav />
 

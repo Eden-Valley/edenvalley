@@ -122,8 +122,8 @@ const Funder = () => {
       }
       playSound('success');
       navigate('/funder-thanks');
-    } catch (error) {
-      console.error("Funder submission failed:", error);
+    } catch {
+      // Silent fail - no user data logged
     } finally {
       setSubmitting(false);
     }

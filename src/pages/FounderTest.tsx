@@ -42,7 +42,7 @@ const FounderTest = () => {
 
   if (analyzing) {
     return (
-      <div className="grain-overlay min-h-screen bg-background flex flex-col items-center justify-center gap-8 relative overflow-hidden">
+      <div className="grain-overlay min-h-[100dvh] bg-background flex flex-col items-center justify-center gap-8 relative overflow-hidden">
         <CustomCursor />
         <ParticleField scrollVelocity={0.8} isScrolling={true} activeFrame={8} />
         <div className="w-[50px] md:w-[60px] h-[50px] md:h-[60px] rounded-full border border-primary" style={{ animation: 'pulse-expand 1.5s ease-in-out infinite' }} />
@@ -58,7 +58,7 @@ const FounderTest = () => {
   const optionSecond = swapped ? { label: q.a, choice: 'a' as const } : { label: q.b, choice: 'b' as const };
 
   return (
-    <div className="grain-overlay min-h-screen bg-background flex flex-col relative overflow-hidden">
+    <div className="grain-overlay min-h-[100dvh] bg-background flex flex-col relative overflow-hidden">
       <CustomCursor />
       <MinimalNav />
       <button onClick={toggleMute} className="sound-toggle" aria-label={isMuted ? "Unmute" : "Mute"}>

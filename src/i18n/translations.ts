@@ -183,6 +183,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'funderThanks.title': 'Application received.',
     'funderThanks.subtitle': 'Under review.',
     'funderThanks.body': 'Eden Valley curates its investor network with the same rigor it applies to founders. You will receive a private briefing by email once your profile is validated.',
+    'funderThanks.share': "The world is full of misunderstood Thinkers and frustrated Doers trapped in the wrong system. If you know a brilliant mind stuck in execution, or a force of nature looking for its mission...",
+    'funderThanks.copy': 'COPY MY PERSONAL INVITATION LINK',
+    'funderThanks.copied': 'Link copied',
   },
   fr: {
     // Home frames
@@ -338,6 +341,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'funderThanks.title': 'Candidature reçue.',
     'funderThanks.subtitle': 'En cours d\'examen.',
     'funderThanks.body': "Eden Valley sélectionne son réseau d'investisseurs avec la même rigueur qu'il applique aux fondateurs. Vous recevrez un briefing privé par email une fois votre profil validé.",
+    'funderThanks.share': "Le monde est plein de Penseurs incompris et de Bâtisseurs frustrés piégés dans le mauvais système. Si vous connaissez un esprit brillant coincé dans l'exécution, ou une force de la nature cherchant sa mission...",
+    'funderThanks.copy': 'COPIER MON LIEN D\'INVITATION PERSONNEL',
+    'funderThanks.copied': 'Lien copié',
   },
   es: {
     'home.scroll': 'Desplazar',
@@ -387,6 +393,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'funderThanks.title': 'Solicitud recibida.',
     'funderThanks.subtitle': 'En revisión.',
     'funderThanks.body': 'Eden Valley selecciona su red de inversores con el mismo rigor que aplica a los fundadores.',
+    'funderThanks.share': "El mundo está lleno de Pensadores incomprendidos y Constructores frustrados atrapados en el sistema equivocado. Si conoces una mente brillante atrapada en la ejecución, o una fuerza de la naturaleza buscando su misión...",
+    'funderThanks.copy': 'COPIAR MI ENLACE DE INVITACIÓN PERSONAL',
+    'funderThanks.copied': 'Enlace copiado',
   },
   ru: {
     'home.scroll': 'Прокрутка',
@@ -436,6 +445,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'funderThanks.title': 'Заявка получена.',
     'funderThanks.subtitle': 'На рассмотрении.',
     'funderThanks.body': 'Eden Valley отбирает свою сеть инвесторов с той же строгостью, что и основателей.',
+    'funderThanks.share': "Мир полон непонятых Мыслителей и разочарованных Строителей, пойманных в неправильную систему. Если вы знаете блестящий ум, застрявший в исполнении, или силу природы, ищущую свою миссию...",
+    'funderThanks.copy': 'СКОПИРОВАТЬ МОЮ ЛИЧНУЮ ССЫЛКУ-ПРИГЛАШЕНИЕ',
+    'funderThanks.copied': 'Ссылка скопирована',
   },
   ar: {
     'home.scroll': 'تمرير',
@@ -485,6 +497,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'funderThanks.title': 'تم استلام الطلب.',
     'funderThanks.subtitle': 'قيد المراجعة.',
     'funderThanks.body': 'Eden Valley ينتقي شبكة مستثمريه بنفس الصرامة المطبقة على المؤسسين.',
+    'funderThanks.share': "العالم مليء بالمفكرين المُحْطَمين والبُنَّاءين المحبوسين في النظام الخاطئ. إذا كنت تعرف عقلًا لامعًا عالقًا في التنفيذ، أو قوة طبيعية تبحث عن مهمتها...",
+    'funderThanks.copy': 'نسخ رابط دعوتي الشخصية',
+    'funderThanks.copied': 'تم نسخ الرابط',
   },
   zh: {
     'home.f1': '有些人看到了地图。',
@@ -575,6 +590,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'funderThanks.title': '申请已收到。',
     'funderThanks.subtitle': '审核中。',
     'funderThanks.body': 'Eden Valley 以对待创始人同样的严格标准筛选其投资者网络。',
+    'funderThanks.share': "世界上到处都是被误解的思考者和被困在错误系统中的沮丧建造者。如果你认识一个被困在执行中的聪明头脑，或一股寻找使命的自然力量...",
+    'funderThanks.copy': '复制我的个人邀请链接',
+    'funderThanks.copied': '链接已复制',
   },
   ja: {
     'home.scroll': 'スクロール',
@@ -624,6 +642,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'funderThanks.title': '申請受理。',
     'funderThanks.subtitle': '審査中。',
     'funderThanks.body': 'Eden Valleyは創業者に適用するのと同じ厳格さで投資家ネットワークを選別します。',
+    'funderThanks.share': "世界は誤解された思考者と間違ったシステムに閉じ込められた苦悩する建設者で満ちている。実行に囚われた輝かしい心、あるいは使命を探す自然の力を知っているなら...",
+    'funderThanks.copy': '私の個人招待リンクをコピー',
+    'funderThanks.copied': 'リンクをコピーしました',
   },
 };
 

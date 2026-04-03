@@ -47,7 +47,7 @@ const Thanks = () => {
   };
 
   return (
-    <div className="grain-overlay min-h-screen bg-background flex flex-col items-center justify-center px-4 md:px-8 relative overflow-hidden">
+    <div className="grain-overlay min-h-[100dvh] bg-background flex flex-col items-center justify-center px-4 md:px-8 relative overflow-hidden">
       <CustomCursor />
       <MinimalNav />
       <button onClick={toggleMute} className="sound-toggle" aria-label={isMuted ? "Unmute" : "Mute"}>
@@ -58,7 +58,7 @@ const Thanks = () => {
       <div className="absolute w-[300px] md:w-[500px] h-[300px] md:h-[500px] rounded-full opacity-10 pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%)', animation: 'loading-breathe 5s ease-in-out infinite' }} />
 
-      <div className="max-w-[550px] text-center relative">
+      <div className="max-w-[550px] w-full text-center relative px-4 sm:px-6">
         <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-6 rounded-full border border-primary/30 flex items-center justify-center" style={{ animation: 'fadeIn 1s ease both' }}>
           <div className="w-1.5 h-1.5 rounded-full bg-primary" />
         </div>
@@ -73,15 +73,15 @@ const Thanks = () => {
         <div className="border-t border-border pt-12 md:pt-16" style={{ animation: 'fadeIn 1s ease 0.4s both' }}>
           <p className="font-body text-muted-foreground text-xs md:text-sm leading-relaxed mb-6 md:mb-8">{t('thanks.share')}</p>
           
-          {error && <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30"><p className="text-destructive text-sm">{error}</p></div>}
+          {error && <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded"><p className="text-destructive text-sm break-words">{error}</p></div>}
           {showManual && (
-            <div className="mb-6 p-4 bg-card/50 border border-border">
+            <div className="mb-6 p-4 bg-card/50 border border-border rounded mx-4 sm:mx-0">
               <p className="text-muted-foreground text-sm mb-2">Select and copy:</p>
-              <input type="text" value={url} readOnly className="w-full px-3 py-2 bg-background border border-border text-foreground text-sm text-center" onClick={(e) => (e.target as HTMLInputElement).select()} />
+              <input type="text" value={url} readOnly className="w-full px-3 py-2 bg-background border border-border text-foreground text-sm text-center rounded break-all" onClick={(e) => (e.target as HTMLInputElement).select()} />
             </div>
           )}
           
-          <button onClick={copyLink} className="eden-btn">{t('thanks.copy')}</button>
+          <button onClick={copyLink} className="eden-btn w-full sm:w-auto px-6 py-3 text-sm sm:text-base">{t('thanks.copy')}</button>
           <p className={`font-mono text-xs text-primary mt-4 tracking-wide transition-opacity duration-300 ${copied ? 'opacity-100' : 'opacity-0'}`}>✓ {t('thanks.copied')}</p>
         </div>
       </div>

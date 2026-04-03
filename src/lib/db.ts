@@ -1,11 +1,10 @@
 import { neon } from '@neondatabase/serverless';
 
-if (!import.meta.env.VITE_DATABASE_URL) {
-  // Fallback for development if .env is missing, but using the provided URL
-  console.warn("VITE_DATABASE_URL is not defined. Using hardcoded fallback.");
-}
+const DATABASE_URL = import.meta.env.VITE_DATABASE_URL;
 
-const DATABASE_URL = import.meta.env.VITE_DATABASE_URL || 'postgresql://neondb_owner:npg_aJPwhso5exi7@ep-green-king-aetmdf4k-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+if (!DATABASE_URL) {
+  throw new Error('VITE_DATABASE_URL environment variable is required');
+}
 
 // @ts-ignore - Neon serverless options
 export const sql = neon(DATABASE_URL, {
@@ -55,10 +54,8 @@ export const initDb = async () => {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
-
-    console.log("Database initialized successfully");
-  } catch (error) {
-    console.error("Failed to initialize database:", error);
+  } catch {
+    // Silent fail - no user data logged
   }
 };
 
@@ -66,10 +63,8 @@ export const initDb = async () => {
 export const deleteUserData = async (userId: string) => {
   try {
     await sql`DELETE FROM users WHERE id = ${userId}`;
-    console.log(`User ${userId} and all related data deleted successfully.`);
     return true;
-  } catch (error) {
-    console.error(`Failed to delete user data for ${userId}:`, error);
+  } catch {
     return false;
   }
 };
@@ -83,8 +78,7 @@ export const createInvitation = async (inviterId: string, inviteeId: string) => 
       VALUES (${inviterId}, ${inviteeId}, ${code})
     `;
     return code;
-  } catch (error) {
-    console.error("Failed to create invitation:", error);
+  } catch {
     return null;
   }
 };
@@ -99,8 +93,7 @@ export const getInvitationNetwork = async (userId: string) => {
       ORDER BY i.created_at DESC
     `;
     return network;
-  } catch (error) {
-    console.error("Failed to get invitation network:", error);
+  } catch {
     return [];
   }
 };
@@ -110,8 +103,7 @@ export const getUserCount = async () => {
   try {
     const result = await sql`SELECT COUNT(*) as count FROM users`;
     return result[0]?.count || 0;
-  } catch (error) {
-    console.error("Failed to get user count:", error);
+  } catch {
     return 0;
   }
 };

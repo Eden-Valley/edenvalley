@@ -134,8 +134,8 @@ const ResultPage = ({ type }: ResultPageProps) => {
       }
       playSound('success');
       navigate('/thanks');
-    } catch (error) {
-      console.error("Submission failed:", error);
+    } catch {
+      // Silent fail - no user data logged
     } finally {
       setSubmitting(false);
     }

@@ -74,16 +74,13 @@ export class MusicGenerator {
    */
   start(): void {
     if (!audioEngine.isReady()) {
-      console.warn('[MusicGenerator] AudioEngine not ready');
       return;
     }
 
     if (this.activeNodeGroup) {
-      console.log('[MusicGenerator] Already started');
       return;
     }
 
-    console.log('[MusicGenerator] Starting Phase 0: Awakening with rich Am9 harmony');
     this.transitionToPhase(0);
   }
 
@@ -108,8 +105,6 @@ export class MusicGenerator {
     
     this.activeNodeGroup = null;
     this.currentPhase = -1;
-    
-    console.log('[MusicGenerator] Stopped');
   }
 
   /**
@@ -136,8 +131,6 @@ export class MusicGenerator {
 
     const progressionKeys = ['awakening', 'emergence', 'revelation', 'confrontation', 'transcendence'] as const;
     const progression = HARMONIC_PROGRESSIONS[progressionKeys[phaseIndex]];
-
-    console.log(`[MusicGenerator] Transitioning to Phase ${phaseIndex}: ${progressionKeys[phaseIndex]} harmony`);
 
     // Créer le nouveau groupe de nœuds pour la nouvelle phase
     const newNodeGroup = this.createPhaseNodeGroup(phaseIndex, ctx);

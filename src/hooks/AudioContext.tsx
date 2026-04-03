@@ -84,18 +84,13 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     let isMounted = true;
 
     const init = async () => {
-      console.log('[AudioProvider] Initializing audio system...');
-      
       const success = await audioEngine.initialize();
       
       if (!isMounted) return;
 
       if (!success) {
-        console.warn('[AudioProvider] Initialization failed');
         return;
       }
-
-      console.log('[AudioProvider] AudioEngine initialized');
     };
 
     init();
@@ -116,8 +111,6 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
 
     const startAudioOnInteraction = async (e: Event) => {
       if (interactionTriggered) return;
-      
-      console.log(`[AudioProvider] Interaction detected: ${e.type}`);
       
       const success = await audioEngine.start();
       
