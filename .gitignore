@@ -7,6 +7,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# Node modules and build
 node_modules
 dist
 dist-ssr
@@ -22,3 +31,44 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Credentials and secrets
+credentials.json
+service-account.json
+secrets.json
+config/local*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backups and temp files
+*.bak
+*.backup
+*~
+#*#
+.cache
+tmp/
+temp/
+*.tmp
+
+# Uploads and user data
+/uploads
+/public/uploads
+/storage
+
+# Coverage and test outputs
+coverage/
+.nyc_output
+
+# Package manager locks (optional - keep one)
+# yarn.lock
+# package-lock.json

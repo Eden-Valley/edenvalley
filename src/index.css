@@ -615,3 +615,45 @@ body { overflow-x: hidden; overflow-y: auto; }
   --eden-green: 145 63% 49%;
 }
 .text-eden-green { color: hsl(var(--eden-green)); }
+
+/* ===== DELPHIC STICKER ===== */
+.delphic-sticker {
+  position: relative;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.7;
+}
+
+.delphic-sticker:hover {
+  opacity: 1;
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 30px hsl(var(--primary) / 0.1);
+  transform: translateY(-2px);
+}
+
+.delphic-sticker::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.3) 0%, transparent 50%, hsl(var(--primary) / 0.3) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.delphic-sticker:hover::before {
+  opacity: 1;
+}
+
+@keyframes delphic-breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+}
+
+.frame.active .delphic-sticker {
+  animation: delphic-breathe 4s ease-in-out infinite;
+}

@@ -186,57 +186,65 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Frame 4: Wozniak — left aligned, dramatic */}
+        {/* Frame 4: Wozniak — minimal, monumental */}
         <div className={`frame ${fc(4)}`}>
-          <div className="max-w-5xl w-full px-6 md:px-12 text-left md:text-center">
-            <p className="font-display text-foreground font-bold tracking-tighter leading-none letter-cascade stagger-1" style={{ fontSize: 'clamp(3rem, 10vw, 8rem)' }}>
+          <div className="flex flex-col items-center text-center px-6 md:px-12">
+            <p className="font-display text-foreground font-extralight tracking-[0.1em] reveal-text stagger-1" style={{ fontSize: 'clamp(4rem, 15vw, 12rem)', lineHeight: 0.9 }}>
               {t('home.f5.woz')}
             </p>
-            <p className="font-body text-muted-foreground mt-4 md:mt-6 text-sm md:text-base leading-relaxed reveal-up stagger-3 max-w-md mx-auto md:mx-auto">
-              {t('home.f5.wozSub')}
-            </p>
+            <div className="mt-4 md:mt-6 reveal-up stagger-2">
+              <span className="text-muted-foreground font-mono text-xs tracking-[0.3em] uppercase">
+                {t('home.f5.wozYear')} — {t('home.f5.wozTag')}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Frame 5: Jobs — contrasting style */}
+        {/* Frame 5: Jobs — minimal, monumental */}
         <div className={`frame ${fc(5)}`}>
-          <div className="max-w-5xl w-full px-6 md:px-12 text-right md:text-center">
-            <p className="font-display text-foreground font-bold tracking-tighter leading-none letter-cascade stagger-1" style={{ fontSize: 'clamp(3rem, 10vw, 8rem)' }}>
+          <div className="flex flex-col items-center text-center px-6 md:px-12">
+            <p className="font-display text-foreground font-extralight tracking-[0.1em] reveal-text stagger-1" style={{ fontSize: 'clamp(4rem, 15vw, 12rem)', lineHeight: 0.9 }}>
               {t('home.f5.jobs')}
             </p>
-            <p className="font-body text-muted-foreground mt-4 md:mt-6 text-sm md:text-base leading-relaxed reveal-up stagger-3 max-w-md ml-auto md:mx-auto">
-              {t('home.f5.jobsSub')}
-            </p>
-          </div>
-        </div>
-
-        {/* Frame 6: Walt & Roy — overlapping text */}
-        <div className={`frame ${fc(6)}`}>
-          <div className="max-w-4xl px-6 md:px-12 space-y-6">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12">
-              <p className="font-display text-foreground font-semibold tracking-tight reveal-split-left stagger-1" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-                {t('home.f6.walt')}
-              </p>
-              <span className="text-eden-dim font-mono text-xs tracking-widest reveal-scale stagger-2">&</span>
-              <p className="font-display text-foreground font-semibold tracking-tight reveal-split-right stagger-3" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-                {t('home.f6.roy')}
-              </p>
+            <div className="mt-4 md:mt-6 reveal-up stagger-2">
+              <span className="text-muted-foreground font-mono text-xs tracking-[0.3em] uppercase">
+                {t('home.f5.jobsYear')} — {t('home.f5.jobsTag')}
+              </span>
             </div>
-            <p className="font-body text-muted-foreground text-sm md:text-base leading-relaxed reveal-up stagger-5 max-w-lg mx-auto text-center">
-              {t('home.f6.waltSub')}
-            </p>
           </div>
         </div>
 
-        {/* Frame 7: The Quote — breathing, centered */}
-        <div className={`frame ${fc(7)} frame-bg-warm`}>
-          <div className="max-w-3xl px-6 md:px-12 text-center">
-            <p className="font-display text-foreground font-light italic leading-relaxed reveal-text stagger-1" style={{ fontSize: 'clamp(1.3rem, 3vw, 2.5rem)', animation: activeFrame === 7 ? 'breathe-scale 4s ease-in-out infinite' : undefined }}>
+        {/* Frame 6: Walt & Roy — unified, minimal */}
+        <div className={`frame ${fc(6)}`}>
+          <div className="flex flex-col items-center text-center px-6 md:px-12">
+            <p className="font-display text-foreground font-extralight tracking-[0.05em] reveal-text stagger-1" style={{ fontSize: 'clamp(3rem, 12vw, 9rem)', lineHeight: 0.9 }}>
+              {t('home.f6.walt')} <span className="text-muted-foreground/50">&</span> {t('home.f6.roy')}
+            </p>
+            <div className="mt-4 md:mt-6 reveal-up stagger-2">
+              <span className="text-muted-foreground font-mono text-xs tracking-[0.3em] uppercase">
+                {t('home.f6.waltYear')} — {t('home.f6.waltTag')} & {t('home.f6.royTag')}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Frame 7: The Quote — monumental, breathing */}
+        <div className={`frame ${fc(7)}`}>
+          <div className="flex flex-col items-center text-center px-6 md:px-12 max-w-4xl">
+            <div className="w-[1px] h-16 bg-foreground/20 mb-8 reveal-up stagger-1" />
+            <p className="font-display text-foreground font-extralight tracking-wide leading-relaxed reveal-text stagger-2" style={{ fontSize: 'clamp(1.2rem, 3vw, 2rem)', letterSpacing: '0.05em' }}>
               {t('home.f6.quote1')}
             </p>
-            <p className="font-display text-primary font-semibold not-italic mt-6 reveal-up stagger-3" style={{ fontSize: 'clamp(1.5rem, 3.5vw, 3rem)' }}>
+            <p className="font-display text-foreground font-light tracking-[0.02em] mt-6 reveal-up stagger-3" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', lineHeight: 1.4, animation: activeFrame === 7 ? 'breathe-scale 6s ease-in-out infinite' : undefined }}>
               {t('home.f6.quote2')}
             </p>
+            <div className="w-[1px] h-16 bg-foreground/20 mt-8 reveal-up stagger-4" />
+            {/* Company references */}
+            <div className="mt-6 flex items-center justify-center gap-12 md:gap-20 reveal-up stagger-5">
+              <span className="text-muted-foreground/60 font-mono text-[10px] tracking-[0.4em] uppercase">Apple</span>
+              <span className="w-[30px] h-[1px] bg-foreground/10" />
+              <span className="text-muted-foreground/60 font-mono text-[10px] tracking-[0.4em] uppercase">Walt Disney</span>
+            </div>
           </div>
         </div>
 
@@ -299,6 +307,18 @@ const Home = () => {
         {/* Frame 13: CTA — Eden Valley */}
         <div className={`frame ${fc(13)} frame-bg-eden`}>
           <div className="flex flex-col items-center max-w-2xl px-6 md:px-8">
+            {/* Delphic Sticker */}
+            <div className="mb-6 md:mb-8 px-4 py-3 border border-primary/20 rounded-sm reveal-up stagger-1 delphic-sticker">
+              <p className="font-serif text-primary/90 text-sm tracking-[0.2em] uppercase text-center">
+                {t('home.knowThySelf.greek')}
+              </p>
+              <p className="font-body text-foreground/80 text-xs tracking-widest text-center mt-2 italic">
+                {t('home.knowThySelf.translation')}
+              </p>
+              <p className="font-body text-muted-foreground text-[10px] tracking-widest text-center mt-2">
+                {t('home.knowThySelf.source')}
+              </p>
+            </div>
             <p className="font-display text-foreground tracking-[0.3em] md:tracking-[0.5em] leading-tight text-morph-in text-center" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', animation: activeFrame === 13 ? 'glow-pulse 3s ease-in-out infinite' : undefined }}>
               {t('home.edenValley')}
             </p>

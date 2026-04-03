@@ -32,7 +32,8 @@ const Thanks = () => {
     setError(null); setShowManual(false);
     const userId = localStorage.getItem('eden-user-id');
     if (!userId) { setError('User ID not found.'); return; }
-    const generatedUrl = `https://edenvalley.io/?ref=${userId}`;
+    const baseUrl = import.meta.env.VITE_REFERRAL_BASE_URL || window.location.origin;
+    const generatedUrl = `${baseUrl}/?ref=${userId}`;
     
     const onSuccess = () => { playSound('click'); setCopied(true); setTimeout(() => setCopied(false), 2500); };
     
