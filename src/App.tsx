@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
-import CustomCursor from "@/components/CustomCursor";
 import LoadingScreen from "@/components/LoadingScreen";
 import Home from "./pages/Home";
 import RoleChoice from "./pages/RoleChoice";
@@ -13,6 +12,7 @@ import Thanks from "./pages/Thanks";
 import Funder from "./pages/Funder";
 import FunderThanks from "./pages/FunderThanks";
 import NotFound from "./pages/NotFound";
+import CustomCursor from "./components/CustomCursor";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +26,7 @@ const App = () => {
         <LanguageProvider>
           <CustomCursor />
           {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/role" element={<RoleChoice />} />

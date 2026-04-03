@@ -2,10 +2,12 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import MinimalNav from '@/components/MinimalNav';
+import { useScrollSound } from '@/hooks/useScrollSound';
 
 const FounderTest = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { playSound } = useScrollSound();
   const [current, setCurrent] = useState(0);
   const [scores, setScores] = useState({ a: 0, b: 0 });
   const [analyzing, setAnalyzing] = useState(false);
@@ -36,6 +38,7 @@ const FounderTest = () => {
   };
 
   const answer = (choice: 'a' | 'b') => {
+    playSound('click');
     const newScores = { ...scores, [choice]: scores[choice] + 1 };
     setScores(newScores);
 
@@ -85,8 +88,8 @@ const FounderTest = () => {
           {q.q}
         </h2>
         <div className="flex flex-col gap-4 w-full">
-          <button className="q-card reveal-up" style={{ animationDelay: '0.2s' }} onClick={() => answer(optionFirst.choice)}>{optionFirst.label}</button>
-          <button className="q-card reveal-up" style={{ animationDelay: '0.35s' }} onClick={() => answer(optionSecond.choice)}>{optionSecond.label}</button>
+          <button className="q-card" onClick={() => answer(optionFirst.choice)}>{optionFirst.label}</button>
+          <button className="q-card" onClick={() => answer(optionSecond.choice)}>{optionSecond.label}</button>
         </div>
       </div>
     </div>

@@ -1,17 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '@/i18n/LanguageContext';
 
-const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
+const LoadingScreen = ({ onComplete, duration = 3800 }: { onComplete: () => void, duration?: number }) => {
   const [phase, setPhase] = useState(0);
+  const { lang } = useLanguage();
 
   useEffect(() => {
+    const p1 = Math.floor(duration * 0.08);
+    const p2 = Math.floor(duration * 0.42);
+    const p3 = Math.floor(duration * 0.74);
+
     const timers = [
-      setTimeout(() => setPhase(1), 300),
-      setTimeout(() => setPhase(2), 1600),
-      setTimeout(() => setPhase(3), 2800),
-      setTimeout(() => onComplete(), 3800),
+      setTimeout(() => setPhase(1), p1),
+      setTimeout(() => setPhase(2), p2),
+      setTimeout(() => setPhase(3), p3),
+      setTimeout(() => onComplete(), duration),
     ];
     return () => timers.forEach(clearTimeout);
-  }, [onComplete]);
+  }, [onComplete, duration]);
 
   return (
     <div className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden">
@@ -34,6 +40,24 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
         }}
       />
 
+      {/* Language indicator */}
+      <div
+        className="absolute top-8 right-8 text-muted-foreground transition-all duration-[1000ms] ease-out"
+        style={{
+          opacity: phase >= 1 ? 1 : 0,
+          fontSize: '0.75rem',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+        }}
+      >
+        {lang === 'fr' ? 'Français' : 
+         lang === 'es' ? 'Español' : 
+         lang === 'ru' ? 'Русский' : 
+         lang === 'ar' ? 'العربية' : 
+         lang === 'zh' ? '中文' : 
+         lang === 'ja' ? '日本語' : 'English'}
+      </div>
+
       {/* Title */}
       <div className="relative flex flex-col items-center gap-4">
         <div
@@ -51,16 +75,10 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
           className="h-[1px] bg-primary/40 transition-all duration-[800ms] ease-out"
           style={{
             width: phase >= 2 ? '120px' : '0',
-            opacity: phase >= 3 ? 0 : 1,
+            opacity: phase >= 2 ? 1 : 0,
           }}
         />
       </div>
-
-      {/* Fade out overlay */}
-      <div
-        className="absolute inset-0 bg-background transition-opacity duration-[800ms]"
-        style={{ opacity: phase >= 3 ? 1 : 0 }}
-      />
     </div>
   );
 };
