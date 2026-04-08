@@ -25,7 +25,7 @@ interface ResultPageProps {
 const TOTAL_FRAMES = 14;
 const COOLDOWN_DURATION = 1200;
 const STRIPE_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK || 'https://buy.stripe.com/00wfZbfZF3jncTvaEV0kE00';
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : '/api');
 
 const ResultPage = ({ type }: ResultPageProps) => {
   const navigate = useNavigate();

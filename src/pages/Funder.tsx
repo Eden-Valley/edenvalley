@@ -23,7 +23,7 @@ const funderSchema = z.object({
 
 const TOTAL_FRAMES = 12;
 const COOLDOWN_DURATION = 1200;
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : '/api');
 
 const Funder = () => {
   const navigate = useNavigate();
