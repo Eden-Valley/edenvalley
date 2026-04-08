@@ -4,7 +4,7 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { authClient } from '@/auth';
 import ParticleField from '@/components/ParticleField';
 
-const API_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : '/api');
+const API_URL = typeof window !== 'undefined' ? `${window.location.origin}/api` : '/api';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(true);
