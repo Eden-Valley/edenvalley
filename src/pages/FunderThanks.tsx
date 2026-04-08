@@ -67,7 +67,7 @@ const FunderThanks = () => {
         </h1>
         <p className="font-display text-muted-foreground text-base md:text-lg italic mb-6 md:mb-8" style={{ animation: 'fadeIn 1s ease 0.2s both' }}>{t('funderThanks.subtitle')}</p>
         <p className="font-body text-muted-foreground text-xs md:text-sm leading-relaxed mb-12 md:mb-16" style={{ animation: 'fadeIn 1s ease 0.3s both' }}>
-          {t('funderThanks.body')}
+          Access to Eden Valley's engineered deal-flow is strictly vetted. We do not expose our matched teams to unverified capital. Our team will review your profile and contact you personally.
         </p>
 
         <div className="border-t border-border pt-12 md:pt-16" style={{ animation: 'fadeIn 1s ease 0.4s both' }}>

@@ -120,6 +120,11 @@ const Home = () => {
         <div className="h-full bg-primary/60 transition-all duration-1000 ease-out" style={{ width: `${((activeFrame + 1) / TOTAL_FRAMES) * 100}%` }} />
       </div>
 
+      {/* Auth link */}
+      <Link to="/auth" className="fixed top-6 left-6 z-50 text-primary text-[10px] tracking-[0.2em] uppercase font-mono hover:text-primary/70 transition-colors duration-300">
+        {t('auth.alreadyAccess')}
+      </Link>
+
       {/* Sound */}
       <button onClick={toggleMute} className="sound-toggle" aria-label={isMuted ? "Unmute" : "Mute"}>
         {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}

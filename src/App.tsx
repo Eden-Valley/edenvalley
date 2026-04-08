@@ -12,6 +12,8 @@ import ResultPage from "./pages/ResultPage";
 import Thanks from "./pages/Thanks";
 import Funder from "./pages/Funder";
 import FunderThanks from "./pages/FunderThanks";
+import Auth from "./pages/Auth";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import CustomCursor from "./components/CustomCursor";
 
@@ -38,6 +40,8 @@ const App = () => {
                 <Route path="/thanks" element={<Thanks />} />
                 <Route path="/funder" element={<Funder />} />
                 <Route path="/funder-thanks" element={<FunderThanks />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

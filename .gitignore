@@ -69,6 +69,21 @@ temp/
 coverage/
 .nyc_output
 
+# Sensitive documents
+*.docx
+*.pdf
+master*
+pitch*
+business*
+
+# Private scripts
+convert_to_docx.py
+create_docx.py
+generate-pdf.cjs
+
+# Remotion renders
+remotion/out/
+
 # Package manager locks (optional - keep one)
 # yarn.lock
 # package-lock.json

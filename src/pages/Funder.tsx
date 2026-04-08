@@ -8,7 +8,6 @@ import ParticleField from '@/components/ParticleField';
 import { useScrollSound } from '@/hooks/useScrollSound';
 import { useScrollVelocity } from '@/hooks/useScrollVelocity';
 import { Volume2, VolumeX } from 'lucide-react';
-import { sql, getUserCount } from '@/lib/db';
 import { z } from 'zod';
 
 const funderSchema = z.object({
@@ -19,10 +18,12 @@ const funderSchema = z.object({
   stage: z.string().min(1),
   sectors: z.string().min(2),
   ticketSize: z.string().min(1),
+  proofOfIdentity: z.string().url('Please enter a valid URL'),
 });
 
 const TOTAL_FRAMES = 12;
 const COOLDOWN_DURATION = 1200;
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const Funder = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const Funder = () => {
   const { playSound, setMusicIntensity, isMuted, toggleMute } = useScrollSound();
   const { velocity, isScrolling } = useScrollVelocity();
   const [activeFrame, setActiveFrame] = useState(0);
-  const [form, setForm] = useState({ investorType: '', stage: '', sectors: '', ticketSize: '', email: '', firstName: '', lastName: '' });
+  const [form, setForm] = useState({ investorType: '', stage: '', sectors: '', ticketSize: '', email: '', firstName: '', lastName: '', proofOfIdentity: '' });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -39,13 +40,12 @@ const Funder = () => {
   const cooldownRef = useRef(false);
   const touchStartY = useRef(0);
 
-  // Fetch user count on mount
+  // Fetch user count from API
   useEffect(() => {
-    const fetchCount = async () => {
-      const count = await getUserCount();
-      setUserCount(count);
-    };
-    fetchCount();
+    fetch(`${API_URL}/stats`)
+      .then(res => res.json())
+      .then(data => setUserCount(data.userCount || 0))
+      .catch(() => setUserCount(0));
   }, []);
 
   const goToFrame = useCallback((index: number) => {
@@ -111,25 +111,41 @@ const Funder = () => {
     e.preventDefault();
     setSubmitError(null);
     playSound('submit');
+    
     const validation = funderSchema.safeParse(form);
     if (!validation.success) {
       setSubmitError('Please fill all required fields correctly.');
       return;
     }
+    
     setSubmitting(true);
+    
     try {
-      await sql`INSERT INTO users (email, first_name, last_name, role) VALUES (${form.email}, ${form.firstName}, ${form.lastName}, 'funder') ON CONFLICT (email) DO UPDATE SET first_name = EXCLUDED.first_name, last_name = EXCLUDED.last_name, role = EXCLUDED.role`;
-      const user = await sql`SELECT id FROM users WHERE email = ${form.email}`;
-      if (user?.length > 0) {
-        const userId = user[0].id;
-        localStorage.setItem('eden-user-id', userId);
-        await sql`INSERT INTO profiles (user_id, type, investor_type, preferred_stage, sectors, ticket_size) VALUES (${userId}, 'funder', ${form.investorType}, ${form.stage}, ${form.sectors}, ${form.ticketSize})`;
+      const referredBy = new URLSearchParams(window.location.search).get('ref') || undefined;
+      
+      const response = await fetch(`${API_URL}/funders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          referredBy,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setSubmitError(result.error || 'Failed to submit application');
+        setSubmitting(false);
+        return;
       }
+
+      localStorage.setItem('eden-user-id', result.userId);
+      localStorage.setItem('eden-referral-code', result.referralCode);
       playSound('success');
       navigate('/funder-thanks');
     } catch {
       setSubmitError('Submission failed. Please try again.');
-    } finally {
       setSubmitting(false);
     }
   };
@@ -171,6 +187,14 @@ const Funder = () => {
       <div className="fixed top-0 left-0 w-full h-[1px] z-50 bg-primary/10">
         <div className="h-full bg-primary/60 transition-all duration-1000 ease-out" style={{ width: `${((activeFrame + 1) / TOTAL_FRAMES) * 100}%` }} />
       </div>
+
+      {/* Skip to form */}
+      <button
+        onClick={() => goToFrame(11)}
+        className="fixed top-16 sm:top-4 left-1/2 -translate-x-1/2 z-50 text-primary text-[10px] tracking-[0.2em] uppercase font-mono hover:text-primary/70 transition-colors duration-300 whitespace-nowrap px-2"
+      >
+        {t('auth.skipToForm')}
+      </button>
 
       <div className="perspective-premium fixed inset-0">
         
@@ -264,14 +288,14 @@ const Funder = () => {
 
         {/* 11: Form */}
         <div className={`frame-3d ${fc(11)}`}>
-          <div className="max-w-lg w-full px-4 md:px-8 mx-auto h-full flex flex-col justify-center form-frame-scrollable py-12 md:py-24">
-            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4 reveal-up-premium">
+          <div className="max-w-lg w-full px-4 md:px-8 mx-auto h-full flex flex-col pt-24 pb-8 overflow-y-auto">
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4 reveal-up-premium min-h-0">
               {submitError && (
                 <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded">
                   <p className="text-destructive text-sm">{submitError}</p>
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-micro text-muted-foreground block ml-1">{t('result.firstName')}</label>
                   <input className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" required value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} onFocus={() => playSound('focus')} />
@@ -298,13 +322,19 @@ const Funder = () => {
                 <RadioGroup name="ticketSize" options={['10k-50k', '50k-250k', '250k-1M', '1M+']} value={form.ticketSize} />
               </div>
               <div className="space-y-1">
+                <label className="text-micro text-muted-foreground block ml-1">
+                  {t('funder.proofOfIdentity')} <span className="text-eden-crimson">*</span>
+                </label>
+                <input className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="url" placeholder="https://linkedin.com/in/..., https://crunchbase.com/..." required value={form.proofOfIdentity} onChange={e => setForm({ ...form, proofOfIdentity: e.target.value })} onFocus={() => playSound('focus')} />
+                <p className="text-micro text-muted-foreground/60 block ml-1">{t('funder.proofOfIdentityDesc')}</p>
+              </div>
+              <div className="space-y-1">
                 <label className="text-micro text-muted-foreground block ml-1">{t('funder.proEmail')}</label>
                 <input className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} onFocus={() => playSound('focus')} />
               </div>
-              <button type="submit" className="w-full py-3 md:py-3.5 mt-4 md:mt-6 font-body text-sm uppercase tracking-widest border border-primary text-foreground hover:bg-primary hover:text-background transition-all duration-300 disabled:opacity-50" disabled={submitting}>
-                {submitting ? t('result.submitting') : t('funder.submit')}
+              <button type="submit" className="w-full py-3 mt-4 font-body text-sm uppercase tracking-widest border border-primary text-foreground hover:bg-primary hover:text-background transition-all duration-300 disabled:opacity-50" disabled={submitting}>
+                {submitting ? t('result.submitting') : t('funder.applyForAccess')}
               </button>
-              <p className="text-micro text-muted-foreground text-center">{t('funder.note')}</p>
             </form>
           </div>
         </div>
