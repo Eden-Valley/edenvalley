@@ -73,15 +73,15 @@ export async function sendRefundEmail(email: string, refundId: string) {
     await resend.emails.send({
       from: 'Eden Valley <no-reply@edenvalley.at.eu.org>',
       to: email,
-      subject: 'Your refund from Eden Valley',
+      subject: 'Your Priority Review Refund - Eden Valley',
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #1a472a;">Refund Processed</h1>
-          <p>Your payment of $49 has been refunded.</p>
-          <p>After the 72-hour review period, your profile was not retained. As promised, your refund has been processed.</p>
+          <p>Your Priority Review payment has been refunded.</p>
+          <p>We did not meet our 72-hour decision SLA. As promised, your refund has been processed.</p>
           <p>Refund ID: ${refundId}</p>
-          <p>The funds should appear in your account within 5-10 business days.</p>
-          <p>You may reapply in the future if your profile evolves.</p>
+          <p>The funds will appear in your account within 5-10 business days.</p>
+          <p style="margin-top: 24px; color: #666;">You're welcome to reapply when your profile evolves.</p>
         </div>
       `,
     });
