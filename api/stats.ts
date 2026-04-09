@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, initDb } from '../_lib/db';
+import { sql, initDb } from '../lib/db';
 
 let dbInitialized = false;
 async function ensureDb() {

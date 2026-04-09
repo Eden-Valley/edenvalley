@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { initDb } from '../_lib/db';
+import { initDb } from '../lib/db';
 
 // Initialize DB on cold start
 let dbInitialized = false;

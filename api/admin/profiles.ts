@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, initDb } from '../_lib/db';
-import { requireAdmin } from '../_lib/auth';
+import { sql, initDb } from '../lib/db';
+import { requireAdmin } from '../lib/auth';
 
 let dbInitialized = false;
 async function ensureDb() {
@@ -90,7 +90,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const user = await sql`SELECT email FROM users WHERE id = ${userId}`;
         if (user.length > 0) {
-          const { sendWelcomeEmail } = await import('../_lib/email');
+          const { sendWelcomeEmail } = await import('../lib/email');
           await sendWelcomeEmail(user[0].email);
         }
 
@@ -132,7 +132,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 WHERE user_id = ${userId}
               `;
 
-              const { sendRefundEmail, sendRejectionEmail } = await import('../_lib/email');
+              const { sendRefundEmail, sendRejectionEmail } = await import('../lib/email');
               await sendRefundEmail(email, refund.id);
               await sendRejectionEmail(email);
               
@@ -142,7 +142,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
           }
 
-          const { sendRejectionEmail } = await import('../_lib/email');
+          const { sendRejectionEmail } = await import('../lib/email');
           await sendRejectionEmail(email);
         }
 

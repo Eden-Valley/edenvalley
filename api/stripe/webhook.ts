@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, initDb } from '../_lib/db';
+import { sql, initDb } from '../lib/db';
 import Stripe from 'stripe';
-import { sendPriorityConfirmationEmail } from '../_lib/email';
+import { sendPriorityConfirmationEmail } from '../lib/email';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;

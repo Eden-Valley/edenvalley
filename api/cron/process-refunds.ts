@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, initDb } from '../_lib/db';
+import { sql, initDb } from '../lib/db';
 import Stripe from 'stripe';
-import { sendRefundEmail } from '../_lib/email';
+import { sendRefundEmail } from '../lib/email';
 
 let dbInitialized = false;
 async function ensureDb() {
