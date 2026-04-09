@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AudioProvider } from "@/hooks/AudioContext";
+import { Analytics } from "@vercel/analytics/react";
 import LoadingScreen from "@/components/LoadingScreen";
 import Home from "./pages/Home";
 import RoleChoice from "./pages/RoleChoice";
@@ -62,6 +63,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
+            <Analytics />
           </AudioProvider>
         </LanguageProvider>
       </TooltipProvider>
