@@ -4,7 +4,11 @@ import { Resend } from 'resend';
 
 let _resend: Resend | null = null;
 function getResend() {
-  if (!_resend && process.env.RESEND_API_KEY) {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY not set');
+      return null;
+    }
     _resend = new Resend(process.env.RESEND_API_KEY);
   }
   return _resend;
@@ -44,11 +48,16 @@ async function initDb() {
 async function sendEmail(to: string, subject: string, html: string) {
   try {
     const resend = getResend();
-    if (resend) {
-      await resend.emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
+    if (!resend) {
+      console.error('Resend not initialized - check RESEND_API_KEY');
+      return false;
     }
+    await resend.emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
     return true;
-  } catch { return false; }
+  } catch (e: any) {
+    console.error('Email send failed:', e?.message || e);
+    return false;
+  }
 }
 
 async function sendWelcomeEmail(email: string) {
