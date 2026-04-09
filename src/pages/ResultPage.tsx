@@ -152,9 +152,6 @@ const ResultPage = ({ type }: ResultPageProps) => {
     try {
       const referredBy = new URLSearchParams(window.location.search).get('ref') || undefined;
 
-      console.log('Submitting to:', `${API_URL}/founders`);
-      console.log('Payload:', { ...form, type, tier, referredBy });
-
       const response = await fetch(`${API_URL}/founders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -166,9 +163,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
         }),
       });
 
-      console.log('Response status:', response.status);
       const result = await response.json();
-      console.log('Response:', result);
 
       if (!response.ok) {
         setSubmitError(result.error || 'Failed to submit application');
@@ -187,9 +182,8 @@ const ResultPage = ({ type }: ResultPageProps) => {
       } else {
         navigate('/thanks?tier=standard');
       }
-    } catch (error) {
-      console.error('Submit error:', error);
-      setSubmitError('Failed to submit. Please try again. Make sure the API server is running.');
+    } catch {
+      setSubmitError('Failed to submit. Please try again.');
       setSubmitting(false);
     }
   };

@@ -106,8 +106,7 @@ export const createFounder = async (data: {
     `;
     
     return { success: true, userId, referralCode: code };
-  } catch (error) {
-    console.error('Error creating founder:', error);
+  } catch {
     return { success: false, error: 'Failed to create profile' };
   }
 };
@@ -144,8 +143,7 @@ export const createFunder = async (data: {
     `;
     
     return { success: true, userId, referralCode: code };
-  } catch (error) {
-    console.error('Error creating funder:', error);
+  } catch {
     return { success: false, error: 'Failed to create profile' };
   }
 };
@@ -185,8 +183,7 @@ export const getPendingProfiles = async () => {
         u.created_at ASC
     `;
     return profiles;
-  } catch (error) {
-    console.error('Error getting pending profiles:', error);
+  } catch {
     return [];
   }
 };

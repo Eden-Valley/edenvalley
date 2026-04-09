@@ -4,7 +4,6 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Lazy DB connection
 let _sql = null;
 function getSql() {
   if (!_sql) {
@@ -15,7 +14,6 @@ function getSql() {
   return _sql;
 }
 
-// Lazy Stripe instance
 let _stripe = null;
 function getStripe() {
   if (!_stripe) {
@@ -26,26 +24,22 @@ function getStripe() {
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// Admin auth
 function requireAdmin(authHeader) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
   return authHeader.split(' ')[1] === process.env.ADMIN_TOKEN;
 }
 
-// Initialize DB schema
 async function initDb() {
   const sql = getSql();
   await sql`CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), email TEXT UNIQUE NOT NULL, first_name TEXT, last_name TEXT, role TEXT, is_validated BOOLEAN DEFAULT FALSE, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
   await sql`CREATE TABLE IF NOT EXISTS profiles (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID REFERENCES users(id) ON DELETE CASCADE, type TEXT, vision TEXT, proof_of_work TEXT, proof_of_identity TEXT, investor_type TEXT, preferred_stage TEXT, sectors TEXT, ticket_size TEXT, status TEXT DEFAULT 'pending', payment_status TEXT DEFAULT 'unpaid', priority_deadline_at TIMESTAMP WITH TIME ZONE, stripe_payment_intent_id TEXT, refund_status TEXT DEFAULT NULL, refund_id TEXT DEFAULT NULL, referral_code TEXT UNIQUE, referred_by TEXT, updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
-  console.log('✅ DB schema ready');
 }
 
-// Send emails
 async function sendEmail(to, subject, html) {
   try {
     await resend.emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
     return true;
-  } catch (e) { console.error('Email failed:', e); return false; }
+  } catch () { return false; }
 }
 
 async function sendWelcomeEmail(email) {
@@ -64,7 +58,6 @@ async function sendPriorityEmail(email) {
   await sendEmail(email, 'Priority Review Confirmed - Eden Valley', '<h1>Priority Review Confirmed</h1><p>Your payment has been received. Our team will manually evaluate your profile within 72 hours.</p>');
 }
 
-// Main handler
 export default async function handler(req, res) {
   const { pathname } = new URL(req.url, 'https://example.com');
   const method = req.method;
@@ -76,14 +69,10 @@ export default async function handler(req, res) {
   if (method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // Initialize DB once
     await initDb();
-  } catch (e) {
-    console.log('DB init:', e.message);
-  }
+  } catch () {}
 
   try {
-    // Route matching
     if (pathname === '/api/health' && method === 'GET') {
       return res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
     }
@@ -147,7 +136,7 @@ export default async function handler(req, res) {
 
       if (method === 'GET') {
         const profiles = await sql`SELECT u.id as user_id, u.email, u.first_name, u.last_name, u.role, u.created_at, p.* FROM users u JOIN profiles p ON u.id = p.user_id WHERE p.status IN ('pending', 'priority', 'under_review') ORDER BY CASE p.status WHEN 'priority' THEN 1 WHEN 'under_review' THEN 2 ELSE 3 END, p.priority_deadline_at ASC NULLS LAST, u.created_at ASC`;
-        return res.status(200).json({ profiles });
+        return res.status(200).json({ profiles});
       }
 
       if (method === 'POST') {
@@ -211,17 +200,15 @@ export default async function handler(req, res) {
       }
 
       const sql = getSql();
-      const expired = await sql`SELECT u.id as user_id, u.email, p.stripe_payment_intent_id FROM users u JOIN profiles p ON u.id = p.user_id WHERE p.status = 'priority' AND p.payment_status = 'paid' AND p.priority_deadline_at < NOW() AND (p.refund_status IS NULL OR p.refund_status = 'pending')`;
+      const expired = await sql`SELECT u.id as user_id, p.stripe_payment_intent_id FROM users u JOIN profiles p ON u.id = p.user_id WHERE p.status = 'priority' AND p.payment_status = 'paid' AND p.priority_deadline_at < NOW() AND (p.refund_status IS NULL OR p.refund_status = 'pending')`;
 
       for (const profile of expired) {
         if (profile.stripe_payment_intent_id) {
           try {
             const refund = await getStripe().refunds.create({ payment_intent: profile.stripe_payment_intent_id, reason: 'requested_by_customer' });
             await sql`UPDATE profiles SET refund_status = 'completed', refund_id = ${refund.id}, updated_at = NOW() WHERE user_id = ${profile.user_id}`;
-            await sendRefundEmail(profile.email, refund.id);
-            console.log(`✅ Refund for ${profile.email}`);
-          } catch (e) {
-            console.error(`❌ Refund failed for ${profile.email}:`, e);
+            await sendRefundEmail('user', refund.id);
+          } catch () {
             await sql`UPDATE profiles SET refund_status = 'failed', updated_at = NOW() WHERE user_id = ${profile.user_id}`;
           }
         }
@@ -243,9 +230,8 @@ export default async function handler(req, res) {
         } else {
           event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         }
-      } catch (e) {
-        console.error('Webhook signature verification failed:', e);
-        return res.status(400).json({ error: 'Webhook error', detail: e.message });
+      } catch () {
+        return res.status(400).json({ error: 'Webhook error' });
       }
 
       if (event.type === 'checkout.session.completed') {
@@ -255,7 +241,6 @@ export default async function handler(req, res) {
         if (email) {
           const sql = getSql();
           await sql`UPDATE profiles SET payment_status = 'paid', status = 'priority', priority_deadline_at = NOW() + INTERVAL '72 hours', stripe_payment_intent_id = ${paymentIntent} WHERE user_id = (SELECT id FROM users WHERE email = ${email} ORDER BY created_at DESC LIMIT 1)`;
-          console.log(`✅ Payment confirmed for ${email}`);
           await sendPriorityEmail(email);
         }
       }
@@ -268,12 +253,11 @@ export default async function handler(req, res) {
         }
       }
 
-      return res.status(200).json({ received: true, testMode: isTestMode });
+      return res.status(200).json({ received: true });
     }
 
     return res.status(404).json({ error: 'Not found' });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch () {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
