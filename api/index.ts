@@ -32,7 +32,7 @@ function getStripe() {
   return _stripe;
 }
 
-const BASE_URL = 'https://edenvalley.at.eu.org';
+const BASE_URL = 'https://www.edenvallie.com';
 const FROM_EMAIL = 'Eden Valley <onboarding@resend.dev>';
 
 const emailStyles = `
