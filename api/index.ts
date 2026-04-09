@@ -23,12 +23,12 @@ let _stripe: any = null;
 function getStripe() {
   if (!_stripe) {
     const Stripe = require('stripe');
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2025-02-24.acacia' });
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
   }
   return _stripe;
 }
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 function requireAdmin(authHeader) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
