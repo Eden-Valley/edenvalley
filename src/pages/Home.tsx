@@ -312,8 +312,20 @@ const Home = () => {
         {/* Frame 13: CTA — Eden Valley */}
         <div className={`frame ${fc(13)} frame-bg-eden`}>
           <div className="flex flex-col items-center max-w-2xl px-6 md:px-8">
+            {/* Product Hunt Badge */}
+            <div className="mb-6 md:mb-8 reveal-up stagger-1">
+              <a href="https://www.producthunt.com/posts/eden-valley" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
+                <img 
+                  alt="Eden Valley - Team architecture for founders. | Product Hunt" 
+                  width="200" 
+                  height="43" 
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1119303&theme=dark&t=1775713183398"
+                  className="mx-auto"
+                />
+              </a>
+            </div>
             {/* Delphic Sticker */}
-            <div className="mb-6 md:mb-8 px-4 py-3 border border-primary/20 rounded-sm reveal-up stagger-1 delphic-sticker">
+            <div className="mb-6 md:mb-8 px-4 py-3 border border-primary/20 rounded-sm reveal-up stagger-2 delphic-sticker">
               <p className="font-serif text-primary/90 text-sm tracking-[0.2em] uppercase text-center">
                 {t('home.knowThySelf.greek')}
               </p>
@@ -327,11 +339,11 @@ const Home = () => {
             <p className="font-display text-foreground tracking-[0.3em] md:tracking-[0.5em] leading-tight text-morph-in text-center" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)', animation: activeFrame === 13 ? 'glow-pulse 3s ease-in-out infinite' : undefined }}>
               {t('home.edenValley')}
             </p>
-            <div className="w-[80px] md:w-[120px] h-[1px] bg-primary/40 my-8 md:my-10 line-expand stagger-2" />
-            <Link to="/role" className="eden-btn reveal-up stagger-3 px-10 md:px-16 py-4 md:py-5 text-base md:text-lg tracking-[0.2em]">
+            <div className="w-[80px] md:w-[120px] h-[1px] bg-primary/40 my-8 md:my-10 line-expand stagger-3" />
+            <Link to="/role" className="eden-btn reveal-up stagger-4 px-10 md:px-16 py-4 md:py-5 text-base md:text-lg tracking-[0.2em]">
               {t('home.cta')}
             </Link>
-            <p className="font-body text-muted-foreground mt-8 md:mt-10 text-sm max-w-md reveal-up stagger-4 text-center leading-relaxed">
+            <p className="font-body text-muted-foreground mt-8 md:mt-10 text-sm max-w-md reveal-up stagger-5 text-center leading-relaxed">
               {t('home.sub')}
             </p>
           </div>

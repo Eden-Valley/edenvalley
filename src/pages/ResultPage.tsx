@@ -42,6 +42,26 @@ const ResultPage = ({ type }: ResultPageProps) => {
   const cooldownRef = useRef(false);
   const touchStartY = useRef(0);
 
+  // Reset submitting state if user returned without paying
+  useEffect(() => {
+    const pendingPayment = localStorage.getItem('eden-pending-payment');
+    if (pendingPayment) {
+      const { timestamp } = JSON.parse(pendingPayment);
+      const fiveMinutes = 5 * 60 * 1000;
+      if (Date.now() - timestamp > fiveMinutes) {
+        localStorage.removeItem('eden-pending-payment');
+        setSubmitting(false);
+      }
+    }
+    
+    // If user already has a submission, navigate to thanks
+    const userId = localStorage.getItem('eden-user-id');
+    if (userId) {
+      const tier = localStorage.getItem('eden-pending-payment') ? 'priority' : 'standard';
+      navigate(`/thanks?tier=${tier}`);
+    }
+  }, [navigate]);
+
   const goToFrame = useCallback((index: number) => {
     if (cooldownRef.current) return;
     if (index < 0 || index >= TOTAL_FRAMES) return;
@@ -162,6 +182,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
       playSound('success');
 
       if (tier === 'priority') {
+        localStorage.setItem('eden-pending-payment', JSON.stringify({ timestamp: Date.now() }));
         window.location.href = STRIPE_PAYMENT_LINK;
       } else {
         navigate('/thanks?tier=standard');

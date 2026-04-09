@@ -24,6 +24,7 @@ const Thanks = () => {
     const tierParam = params.get('tier');
     if (tierParam === 'priority') {
       setTier('priority');
+      localStorage.removeItem('eden-pending-payment');
     }
     const storedCode = localStorage.getItem('eden-referral-code');
     if (storedCode) {
