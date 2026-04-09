@@ -1,16 +1,15 @@
 import { neon } from '@neondatabase/serverless';
-import Stripe from 'stripe';
-import { Resend } from 'resend';
 
-let _resend = null;
+let _resend: any = null;
 function getResend() {
   if (!_resend) {
+    const { Resend } = require('resend');
     _resend = new Resend(process.env.RESEND_API_KEY);
   }
   return _resend;
 }
 
-let _sql = null;
+let _sql: ReturnType<typeof neon> | null = null;
 function getSql() {
   if (!_sql) {
     const DATABASE_URL = process.env.DATABASE_URL;
@@ -20,9 +19,10 @@ function getSql() {
   return _sql;
 }
 
-let _stripe = null;
+let _stripe: any = null;
 function getStripe() {
   if (!_stripe) {
+    const Stripe = require('stripe');
     _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2025-02-24.acacia' });
   }
   return _stripe;
