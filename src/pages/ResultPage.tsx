@@ -160,6 +160,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
           type,
           tier,
           referredBy,
+          language: localStorage.getItem('eden-language') || 'en',
         }),
       });
 

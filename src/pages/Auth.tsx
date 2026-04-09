@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { authClient } from '@/auth';
 import ParticleField from '@/components/ParticleField';
@@ -13,16 +13,50 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notAccepted, setNotAccepted] = useState(false);
+  const [magicVerified, setMagicVerified] = useState(false);
+  const [tokenError, setTokenError] = useState<string | null>(null);
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    authClient.getSession().then((result) => {
-      if (result.data?.session && result.data?.user) {
-        navigate('/');
+    const token = searchParams.get('token');
+    if (token) {
+      verifyMagicToken(token);
+    } else {
+      authClient.getSession().then((result) => {
+        if (result.data?.session && result.data?.user) {
+          navigate('/');
+        }
+      });
+    }
+  }, [navigate, searchParams]);
+
+  const verifyMagicToken = async (token: string) => {
+    setLoading(true);
+    setTokenError(null);
+    try {
+      const res = await fetch(`${API_URL}/auth/verify?token=${encodeURIComponent(token)}`);
+      const data = await res.json();
+      
+      if (!res.ok || !data.valid) {
+        setTokenError(data.error || 'Invalid or expired token');
+        setLoading(false);
+        return;
       }
-    });
-  }, [navigate]);
+
+      setMagicVerified(true);
+      localStorage.setItem('eden-user-id', data.userId);
+      localStorage.setItem('eden-email', data.email);
+      
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch {
+      setTokenError('Failed to verify token. Please try again.');
+      setLoading(false);
+    }
+  };
 
   const checkUserValidation = async (email: string): Promise<boolean> => {
     try {
@@ -79,7 +113,34 @@ const Auth = () => {
           <div className="w-[60px] h-[1px] bg-primary/40 mx-auto my-4" />
         </div>
 
-        {notAccepted ? (
+        {tokenError ? (
+          <div className="text-center space-y-6">
+            <p className="font-display text-eden-crimson text-xl tracking-wide">
+              {t('auth.tokenError') || 'Invalid Link'}
+            </p>
+            <p className="font-body text-muted-foreground text-sm leading-relaxed">
+              {tokenError}
+            </p>
+            <Link to="/" className="eden-btn inline-block px-10 py-3 text-sm tracking-[0.2em]">
+              {t('auth.backToHome')}
+            </Link>
+          </div>
+        ) : magicVerified ? (
+          <div className="text-center space-y-6">
+            <p className="font-display text-primary text-xl tracking-wide">
+              ✓ Access Confirmed
+            </p>
+            <p className="font-body text-muted-foreground text-sm leading-relaxed">
+              Redirecting you to Eden Valley...
+            </p>
+          </div>
+        ) : loading && searchParams.get('token') ? (
+          <div className="text-center space-y-6">
+            <p className="font-display text-foreground text-xl tracking-wide">
+              Verifying your access...
+            </p>
+          </div>
+        ) : notAccepted ? (
           <div className="text-center space-y-6">
             <p className="font-display text-foreground text-xl tracking-wide">
               {t('auth.notAccepted')}
