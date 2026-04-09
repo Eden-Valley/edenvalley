@@ -346,6 +346,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
                 </button>
                 <p className="text-micro text-muted-foreground/50 text-center">{t('result.priorityTime')}</p>
                 <p className="text-micro text-green-500/80 text-center">{t('result.refundGuarantee')}</p>
+                <p className="text-micro text-muted-foreground/60 text-center">{t('result.refundSpeedNote')}</p>
 
                 <p className="text-micro text-muted-foreground/40 text-center pt-1">{t('result.paymentNote')}</p>
               </div>

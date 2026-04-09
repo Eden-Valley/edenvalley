@@ -88,9 +88,6 @@ const Thanks = () => {
               {t('thanks.priorityTitle')}
             </h1>
             <p className="font-display text-muted-foreground text-base md:text-lg italic mb-6 md:mb-8" style={{ animation: 'fadeIn 1s ease 0.2s both' }}>{t('thanks.prioritySubtitle')}</p>
-            <p className="font-body text-muted-foreground text-xs md:text-sm leading-relaxed mb-12 md:mb-16" style={{ animation: 'fadeIn 1s ease 0.3s both' }}>
-              {t('thanks.priorityBody')}
-            </p>
           </>
         ) : (
           <>

@@ -151,6 +151,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'result.priorityTime': '$49 · Decision within 72 hours',
     'result.paymentNote': 'Payment does not guarantee acceptance.',
     'result.refundGuarantee': 'Refund if we miss the 72-hour SLA.',
+    'result.refundSpeedNote': 'The fee buys speed, not access.',
     'result.scrollToContinue': 'Continue ↓',
 
     // Thanks
@@ -347,6 +348,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'result.priorityTime': '49€ · Décision sous 72 heures',
     'result.paymentNote': 'Le paiement ne garantit pas l\'acceptation.',
     'result.refundGuarantee': 'Remboursement si on dépasse le délai de 72h.',
+    'result.refundSpeedNote': 'Le tarif achète la vitesse, pas l\'accès.',
     'result.scrollToContinue': 'Continuer ↓',
     'thanks.title': 'Profil enregistré.',
     'thanks.subtitle': 'Validation en cours.',

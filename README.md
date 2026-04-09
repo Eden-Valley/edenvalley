@@ -1,282 +1,133 @@
-# Eden Valley Genesis
+# Eden Valley
 
-[![React](https://img.shields.io/badge/React-18.2.0-61DAFB?logo=react)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.2.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.0.0-646CFF?logo=vite)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.0-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
-[![Vitest](https://img.shields.io/badge/Vitest-1.0.0-6E9F18?logo=vitest)](https://vitest.dev/)
-[![Playwright](https://img.shields.io/badge/Playwright-1.40.0-2EAD33?logo=playwright)](https://playwright.dev/)
+> **Discover your true cognitive nature. Find your complement. Build the impossible.**
 
-> **Découvrez votre véritable nature cognitive. Trouvez votre complément. Construisez l'impossible.**
+Eden Valley is a cognitive matching platform that identifies and connects founders according to their cognitive DNA - distinguishing **Architects** (thinkers, mapmakers) from **Builders** (doers, executors). Inspired by legendary duos like Wozniak & Jobs, Walt & Roy Disney.
 
-Eden Valley est une plateforme de matching cognitif qui identifie et connecte les fondateurs selon leur ADN cognitif - distinguant les **Architectes** (penseurs, mapmakers) des **Bâtisseurs** (doers, exécutants). Inspirée par les duos légendaires comme Wozniak & Jobs, Walt & Roy Disney.
+## 🚀 Production
 
-## 🎯 Mission
+**Live URL:** https://edenvalley.at.eu.org
 
-Le taux d'échec des startups n'est pas une question d'idées ou de marchés. C'est une question d'**architecture fondamentale des équipes fondatrices**.
+**Admin Dashboard:** https://edenvalley.at.eu.org/admin (token: `eden-valley-admin-secret-token`)
 
-Eden Valley ne match pas les compétences. Elle match l'**ADN cognitif**.
+## ✨ Features
 
-- **Pionnier (Architecte)** : Voit la carte, conçoit l'architecture, résout les problèmes complexes
-- **Bâtisseur (Doer)** : Construit la route, exécute avec énergie, transforme la vision en réalité
+### 🧠 Cognitive Diagnostic
+- 8-question test based on cognitive psychology
+- Scoring algorithm differentiating Thinker vs Doer
+- Personalized result with emotional storytelling (Pain → Relief → Revelation)
 
-## ✨ Fonctionnalités
+### 🔐 Signup System with Admin Validation
+- User registration with Neon PostgreSQL database
+- Admin validation required before account activation
+- Neon Auth integration for post-validation login
 
-### 🧠 Diagnostic Cognitif
-- Test de 8 questions basé sur la psychologie cognitive
-- Algorithme de scoring différenciant Thinker vs Doer
-- Résultat personnalisé avec storytelling émotionnel (Pain → Relief → Revelation)
+### 💳 Priority Fast-Track ($49)
+- Stripe Payment Link integration
+- Automatic 72-hour SLA guarantee
+- Refund if SLA missed
 
-### 🌐 Internationalisation (i18n)
-- Support de 7 langues : EN, FR, ES, RU, AR, ZH, JA
-- Détection automatique de la langue du navigateur
-- Système de traduction complet avec React Context
+### 📧 Automated Emails
+- Resend integration for transactional emails
+- Welcome emails on validation
+- Payment confirmation emails
 
-### 🎵 Expérience Audio Premium
-- Musique ambiente procédurale générée en temps réel (Web Audio API)
-- Sons de feedback interactifs (scroll, transitions, actions)
-- Contrôle de l'intensité musicale selon la progression utilisateur
+### 🌐 Internationalization (i18n)
+- Support for 7 languages: EN, FR, ES, RU, AR, ZH, JA
+- Automatic browser language detection
 
-### 🔗 Système de Parrainage
-- Génération de liens d'invitation personnalisés
-- Tracking des referrals
-- Accès exclusif par validation
+### 🎵 Premium Audio Experience
+- Procedural ambient music (Web Audio API)
+- Interactive feedback sounds
 
-### 🎨 UI/UX Épurée
-- Design minimaliste inspiré de l'esthétique "Eden"
-- Animations fluides avec Framer Motion
-- Scroll storytelling avec 14 frames narratives
-- Responsive mobile-first
+### 🔗 Referral System
+- Personalized invitation links
+- Referral tracking
 
-### 💼 Profils Investisseurs
-- Formulaire dédié pour les funder
-- Sélection rigoureuse du réseau d'investisseurs
-- Matching avec startups structuralement infaillibles
+## 🛠 Tech Stack
 
-## 🛠 Stack Technique
-
-| Couche | Technologie |
-|--------|-------------|
-| **Framework** | React 18.2 + TypeScript 5.2 |
-| **Build Tool** | Vite 5.0 |
-| **Styling** | Tailwind CSS 3.4 + shadcn/ui |
-| **Routing** | React Router DOM 6.20 |
-| **State** | React Context + Hooks |
-| **Audio** | Web Audio API (procédural) |
-| **Testing** | Vitest + React Testing Library + Playwright |
-| **Icons** | Lucide React |
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 18 + TypeScript + Vite |
+| **Styling** | Tailwind CSS + shadcn/ui |
+| **Routing** | React Router DOM 6 |
 | **Database** | PostgreSQL (Neon) |
+| **Auth** | Neon Auth |
+| **Payments** | Stripe |
+| **Email** | Resend |
+| **Deployment** | Vercel |
 
-## 📋 Prérequis
+## 📋 Prerequisites
 
 - **Node.js** >= 18.0.0
-- **npm** >= 9.0.0 (ou yarn/pnpm/bun)
+- **npm** >= 9.0.0
 - **Git**
 
 ## 🚀 Installation
 
-### 1. Cloner le repository
-
 ```bash
-git clone https://github.com/kellykheir/eden-valley-genesis.git
-cd eden-valley-genesis
-```
-
-### 2. Installer les dépendances
-
-```bash
+git clone https://github.com/Eden-Valley/edenvalley.git
+cd edenvalley
 npm install
-# ou
-yarn install
-# ou
-bun install
-```
-
-### 3. Configurer les variables d'environnement
-
-Créer un fichier `.env.local` à la racine :
-
-```env
-# Database (Neon PostgreSQL)
-VITE_DATABASE_URL=postgresql://user:password@host/database?sslmode=require
-
-# Referral System
-VITE_REFERRAL_BASE_URL=https://edensvalley.com/
-```
-
-> ⚠️ **Important** : Le fichier `.env.local` est ignoré par git (voir `.gitignore`). Ne jamais commiter de credentials.
-
-### 4. Lancer le serveur de développement
-
-```bash
 npm run dev
 ```
 
-L'application est accessible à `http://localhost:5173`
+## 🔧 Environment Variables
 
-## 📜 Scripts disponibles
+Create `.env.local`:
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Serveur de développement avec HMR |
-| `npm run build` | Build de production (optimisé) |
-| `npm run preview` | Prévisualisation du build de production |
-| `npm test` | Tests unitaires avec Vitest (watch mode) |
-| `npm run test:ui` | Tests unitaires avec interface Vitest UI |
-| `npm run test:e2e` | Tests end-to-end avec Playwright |
-| `npm run lint` | Linting ESLint |
-| `npm run typecheck` | Vérification TypeScript |
+```env
+# Database (Neon PostgreSQL)
+DATABASE_URL=postgresql://...
 
-## 🏗 Structure du projet
+# Stripe
+STRIPE_SECRET_KEY=sk_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+VITE_STRIPE_PAYMENT_LINK=https://buy.stripe.com/...
 
-```
-eden-valley-genesis/
-├── src/
-│   ├── components/          # Composants React réutilisables
-│   │   └── ui/               # Composants shadcn/ui
-│   ├── hooks/                # Custom React Hooks
-│   │   ├── AudioContext.tsx  # Système audio procédural
-│   │   ├── useScrollSound.ts # Sons de scroll
-│   │   └── useScrollVelocity.ts
-│   ├── i18n/                 # Internationalisation
-│   │   ├── LanguageContext.tsx
-│   │   └── translations.ts     # Traductions (7 langues)
-│   ├── lib/                  # Utilitaires
-│   │   └── utils.ts
-│   ├── pages/                # Composants page
-│   │   ├── Home.tsx          # Landing storytelling
-│   │   ├── RoleChoice.tsx    # Choix Found/Build/Fund
-│   │   ├── Test.tsx          # Diagnostic cognitif
-│   │   ├── ResultPage.tsx    # Résultat personnalisé
-│   │   ├── Funder.tsx        # Profil investisseur
-│   │   └── Thanks.tsx        # Confirmation
-│   ├── App.tsx               # Root component
-│   ├── main.tsx              # Entry point
-│   └── index.css             # Styles globaux + Tailwind
-├── public/                   # Assets statiques
-├── .windsurf/               # Workflows Windsurf
-├── docs/                     # Documentation
-├── tests/                    # Tests additionnels
-├── .env.example              # Template variables d'env
-├── index.html
-├── package.json
-├── tailwind.config.ts
-├── tsconfig.json
-├── vite.config.ts
-└── vitest.config.ts
+# Email
+RESEND_API_KEY=re_...
+
+# Admin
+ADMIN_TOKEN=your-admin-token
+
+# Cron
+CRON_SECRET=your-cron-secret
+
+# Auth
+VITE_NEON_AUTH_URL=https://...
 ```
 
-## 🎨 Design System
+## 🌐 API Routes
 
-### Couleurs (Tailwind Config)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health` | GET | Health check |
+| `/api/stats` | GET | User count stats |
+| `/api/founders` | POST | Submit founder profile |
+| `/api/funders` | POST | Submit funder profile |
+| `/api/admin/profiles` | GET | List all profiles (admin) |
+| `/api/validate-user` | POST | Validate user profile (admin) |
+| `/api/cron/process-refunds` | POST | Process refunds (cron) |
+| `/api/stripe/webhook` | POST | Stripe webhook handler |
 
-```javascript
-colors: {
-  background: '#0A0A0A',      // Noir profond
-  foreground: '#FAFAFA',       // Blanc cassé
-  primary: '#D4AF37',        // Or Eden
-  'eden-crimson': '#DC2626', // Rouge dramatique
-  'eden-dim': '#525252',     // Gris atténué
-}
-```
+## 🔒 Security
 
-### Typographie
+- ✅ Environment variables excluded from git
+- ✅ Input validation
+- ✅ Admin token authentication
+- ✅ Stripe webhook signature verification
 
-- **Display** : Cormorant Garamond (élégance classique)
-- **Body** : DM Sans (lisibilité moderne)
-- **Mono** : JetBrains Mono (data, tags)
+## 👥 Team
 
-### Animation
-
-- **Easing** : `cubic-bezier(0.4, 0, 0.2, 1)`
-- **Durations** : 200ms (micro), 500ms (standard), 1000ms (dramatic)
-- **Stagger** : 100ms entre éléments
-
-## 🧪 Tests
-
-### Tests unitaires
-
-```bash
-npm test
-```
-
-Couverture actuelle :
-- ✅ Storytelling rendering
-- ✅ Navigation logo display
-- ✅ i18n language switching
-- ✅ Audio context initialization
-
-### Tests E2E (Playwright)
-
-```bash
-npm run test:e2e
-```
-
-Scénarios testés :
-- Parcours utilisateur complet (Home → Test → Result)
-- Flow investisseur
-- Changement de langue
-- Responsive design
-
-## 🔧 Dépannage
-
-### Storytelling ne s'affiche pas
-
-1. Vérifier les logs console pour `[Storytelling Diagnostic]`
-2. Confirmer que `src/i18n/translations.ts` contient les clés :
-   - `thinker.pain1`, `thinker.relief1`, `thinker.revelation`
-   - `doer.pain1`, `doer.relief1`, `doer.revelation`
-   - `funder.pain1`, `funder.revelation`
-3. Vérifier que la classe `.visible` est ajoutée aux éléments `.scroll-reveal`
-
-### Audio ne démarre pas
-
-- L'audio Web nécessite une interaction utilisateur (click/touch/scroll)
-- Vérifier que le navigateur n'a pas bloqué l'autoplay
-- Consulter les logs `[Audio]` dans la console
-
-### Erreurs de build
-
-```bash
-# Nettoyer le cache
-rm -rf node_modules dist
-npm install
-npm run build
-```
-
-## 🔒 Sécurité
-
-- ✅ Variables d'environnement exclues du git (`.gitignore`)
-- ✅ Pas de credentials hardcodés
-- ✅ Database URLs uniquement via env vars
-- ✅ Validation des entrées utilisateur
-- ✅ Protection XSS via React
-
-## 📄 Licence
-
-Propriétaire - © 2024 Eden Valley. Tous droits réservés.
-
-## 👥 Équipe
-
-- **Fondateur** : [Kelly Kheir](https://github.com/kellykheir)
-
-## 🤝 Contribution
-
-Ce projet est actuellement en développement privé. Pour toute suggestion :
-
-1. Forker le repository
-2. Créer une branche (`git checkout -b feature/amazing-feature`)
-3. Committer (`git commit -m 'Add amazing feature'`)
-4. Pusher (`git push origin feature/amazing-feature`)
-5. Ouvrir une Pull Request
+- **Founder:** [Kelly Kheir](https://github.com/kellykheir)
 
 ## 📞 Contact
 
-Pour toute question ou partenariat : contact@edensvalley.com
+contact@edenvalley.com
 
 ---
 
 <p align="center">
-  <strong>Eden Valley</strong> — Trouvez votre moitié. Construisez l'empire.
+  <strong>Eden Valley</strong> — Find your half. Build the empire.
 </p>
-
