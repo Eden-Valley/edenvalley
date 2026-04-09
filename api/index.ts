@@ -1,5 +1,5 @@
 import { neon } from '@neondatabase/serverless';
-import { Stripe } from 'stripe';
+import Stripe from 'stripe';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -15,8 +15,15 @@ function getSql() {
   return _sql;
 }
 
-// Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+// Lazy Stripe instance
+let _stripe = null;
+function getStripe() {
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2025-02-24.acacia' });
+  }
+  return _stripe;
+}
+
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // Admin auth
@@ -180,7 +187,7 @@ export default async function handler(req, res) {
       for (const profile of expired) {
         if (profile.stripe_payment_intent_id) {
           try {
-            const refund = await stripe.refunds.create({ payment_intent: profile.stripe_payment_intent_id, reason: 'requested_by_customer' });
+            const refund = await getStripe().refunds.create({ payment_intent: profile.stripe_payment_intent_id, reason: 'requested_by_customer' });
             await sql`UPDATE profiles SET refund_status = 'completed', refund_id = ${refund.id}, updated_at = NOW() WHERE user_id = ${profile.user_id}`;
             await sendRefundEmail(profile.email, refund.id);
             console.log(`✅ Refund for ${profile.email}`);
@@ -200,7 +207,7 @@ export default async function handler(req, res) {
       let event;
       try {
         if (webhookSecret && req.headers['stripe-signature']) {
-          event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], webhookSecret);
+          event = getStripe().webhooks.constructEvent(req.body, req.headers['stripe-signature'], webhookSecret);
         } else {
           event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         }
