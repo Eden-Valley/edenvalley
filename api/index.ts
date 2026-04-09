@@ -2,7 +2,13 @@ import { neon } from '@neondatabase/serverless';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend = null;
+function getResend() {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 let _sql = null;
 function getSql() {
@@ -37,7 +43,7 @@ async function initDb() {
 
 async function sendEmail(to, subject, html) {
   try {
-    await resend.emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
+    await getResend().emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
     return true;
   } catch () { return false; }
 }
