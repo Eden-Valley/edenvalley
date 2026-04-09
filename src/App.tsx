@@ -29,6 +29,23 @@ const App = () => {
         <LanguageProvider>
           <AudioProvider>
             <CustomCursor />
+            
+            {/* Product Hunt Badge - Bottom Right */}
+            <a 
+              href="https://www.producthunt.com/posts/eden-valley" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="fixed bottom-6 right-6 z-50 opacity-60 hover:opacity-100 transition-opacity"
+              title="Eden Valley on Product Hunt"
+            >
+              <img 
+                alt="Eden Valley on Product Hunt" 
+                width="160" 
+                height="35" 
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1119303&theme=dark&t=1775713183398"
+              />
+            </a>
+            
             {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <Routes>
