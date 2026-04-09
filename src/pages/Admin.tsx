@@ -42,7 +42,7 @@ const Admin = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/admin/profiles`, {
+      const res = await fetch(`${API_URL}/admin/profiles`, {
         headers: { 'Authorization': `Bearer ${authToken}` }
       });
       if (!res.ok) {
@@ -94,7 +94,7 @@ const Admin = () => {
     setActionLoading(userId);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/admin/review`, {
+      const res = await fetch(`${API_URL}/admin/review`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
