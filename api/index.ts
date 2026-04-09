@@ -1,5 +1,5 @@
 import { neon } from '@neondatabase/serverless';
-import Stripe from 'stripe';
+import { Stripe } from 'stripe';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
