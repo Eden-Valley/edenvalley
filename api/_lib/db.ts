@@ -1,7 +1,12 @@
 import { neon } from '@neondatabase/serverless';
 
 const DATABASE_URL = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
-export const sql = neon(DATABASE_URL);
+
+if (!DATABASE_URL) {
+  console.error('❌ DATABASE_URL is not set');
+}
+
+export const sql = neon(DATABASE_URL || '');
 
 // Initialize database schema
 export async function initDb() {
