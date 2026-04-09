@@ -1,12 +1,27 @@
 import { neon } from '@neondatabase/serverless';
 
-const DATABASE_URL = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
+let _sql: ReturnType<typeof neon> | null = null;
 
-if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL is not set');
+export function getSql() {
+  if (!_sql) {
+    const DATABASE_URL = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
+    if (!DATABASE_URL) {
+      throw new Error('DATABASE_URL environment variable is not set');
+    }
+    _sql = neon(DATABASE_URL);
+    console.log('✅ Neon DB connection initialized');
+  }
+  return _sql;
 }
 
-export const sql = neon(DATABASE_URL || '');
+// Tagged template function for backward compatibility
+function sql(strings: TemplateStringsArray, ...values: unknown[]) {
+  return getSql()(strings, ...values);
+}
+sql.then = undefined;
+
+// Export as both default and named
+export { sql };
 
 // Initialize database schema
 export async function initDb() {
@@ -82,7 +97,8 @@ export async function initDb() {
 
     for (const col of columnsToAdd) {
       try {
-        await sql([col]);
+        const rawSql = getSql() as unknown as (sql: string) => Promise<unknown>;
+        await rawSql(col);
       } catch {
         // Ignore errors for ALTER TABLE
       }
