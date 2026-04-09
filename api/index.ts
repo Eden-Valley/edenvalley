@@ -1,9 +1,10 @@
 import { neon } from '@neondatabase/serverless';
+import Stripe from 'stripe';
+import { Resend } from 'resend';
 
-let _resend: any = null;
+let _resend: Resend | null = null;
 function getResend() {
-  if (!_resend) {
-    const { Resend } = require('resend');
+  if (!_resend && process.env.RESEND_API_KEY) {
     _resend = new Resend(process.env.RESEND_API_KEY);
   }
   return _resend;
@@ -19,18 +20,17 @@ function getSql() {
   return _sql;
 }
 
-let _stripe: any = null;
+let _stripe: Stripe | null = null;
 function getStripe() {
-  if (!_stripe) {
-    const Stripe = require('stripe');
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+  if (!_stripe && process.env.STRIPE_SECRET_KEY) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   }
   return _stripe;
 }
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 
-function requireAdmin(authHeader) {
+function requireAdmin(authHeader: string | undefined) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
   return authHeader.split(' ')[1] === process.env.ADMIN_TOKEN;
 }
@@ -41,30 +41,33 @@ async function initDb() {
   await sql`CREATE TABLE IF NOT EXISTS profiles (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID REFERENCES users(id) ON DELETE CASCADE, type TEXT, vision TEXT, proof_of_work TEXT, proof_of_identity TEXT, investor_type TEXT, preferred_stage TEXT, sectors TEXT, ticket_size TEXT, status TEXT DEFAULT 'pending', payment_status TEXT DEFAULT 'unpaid', priority_deadline_at TIMESTAMP WITH TIME ZONE, stripe_payment_intent_id TEXT, refund_status TEXT DEFAULT NULL, refund_id TEXT DEFAULT NULL, referral_code TEXT UNIQUE, referred_by TEXT, updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
 }
 
-async function sendEmail(to, subject, html) {
+async function sendEmail(to: string, subject: string, html: string) {
   try {
-    await getResend().emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
+    const resend = getResend();
+    if (resend) {
+      await resend.emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
+    }
     return true;
-  } catch () { return false; }
+  } catch { return false; }
 }
 
-async function sendWelcomeEmail(email) {
+async function sendWelcomeEmail(email: string) {
   await sendEmail(email, 'Welcome to Eden Valley', '<h1>Welcome</h1><p>Your application has been accepted.</p>');
 }
 
-async function sendRejectionEmail(email) {
+async function sendRejectionEmail(email: string) {
   await sendEmail(email, 'Your application to Eden Valley', '<h1>Application Status</h1><p>Thank you for your interest in Eden Valley.</p>');
 }
 
-async function sendRefundEmail(email, refundId) {
+async function sendRefundEmail(email: string, refundId: string) {
   await sendEmail(email, 'Your Priority Review Refund - Eden Valley', `<h1>Refund Processed</h1><p>Your Priority Review payment has been refunded.</p><p>We did not meet our 72-hour decision SLA. As promised, your refund has been processed.</p><p>Refund ID: ${refundId}</p>`);
 }
 
-async function sendPriorityEmail(email) {
+async function sendPriorityEmail(email: string) {
   await sendEmail(email, 'Priority Review Confirmed - Eden Valley', '<h1>Priority Review Confirmed</h1><p>Your payment has been received. Our team will manually evaluate your profile within 72 hours.</p>');
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   const { pathname } = new URL(req.url, 'https://example.com');
   const method = req.method;
 
@@ -76,7 +79,7 @@ export default async function handler(req, res) {
 
   try {
     await initDb();
-  } catch () {}
+  } catch { }
 
   try {
     if (pathname === '/api/health' && method === 'GET') {
@@ -142,7 +145,7 @@ export default async function handler(req, res) {
 
       if (method === 'GET') {
         const profiles = await sql`SELECT u.id as user_id, u.email, u.first_name, u.last_name, u.role, u.created_at, p.* FROM users u JOIN profiles p ON u.id = p.user_id WHERE p.status IN ('pending', 'priority', 'under_review') ORDER BY CASE p.status WHEN 'priority' THEN 1 WHEN 'under_review' THEN 2 ELSE 3 END, p.priority_deadline_at ASC NULLS LAST, u.created_at ASC`;
-        return res.status(200).json({ profiles});
+        return res.status(200).json({ profiles });
       }
 
       if (method === 'POST') {
@@ -211,10 +214,13 @@ export default async function handler(req, res) {
       for (const profile of expired) {
         if (profile.stripe_payment_intent_id) {
           try {
-            const refund = await getStripe().refunds.create({ payment_intent: profile.stripe_payment_intent_id, reason: 'requested_by_customer' });
-            await sql`UPDATE profiles SET refund_status = 'completed', refund_id = ${refund.id}, updated_at = NOW() WHERE user_id = ${profile.user_id}`;
-            await sendRefundEmail('user', refund.id);
-          } catch () {
+            const stripe = getStripe();
+            if (stripe) {
+              const refund = await stripe.refunds.create({ payment_intent: profile.stripe_payment_intent_id, reason: 'requested_by_customer' });
+              await sql`UPDATE profiles SET refund_status = 'completed', refund_id = ${refund.id}, updated_at = NOW() WHERE user_id = ${profile.user_id}`;
+              await sendRefundEmail('user', refund.id);
+            }
+          } catch {
             await sql`UPDATE profiles SET refund_status = 'failed', updated_at = NOW() WHERE user_id = ${profile.user_id}`;
           }
         }
@@ -229,14 +235,15 @@ export default async function handler(req, res) {
       const url = new URL(req.url, 'https://example.com');
       const isTestMode = url.searchParams.get('test') === 'true';
 
-      let event;
+      let event: any;
       try {
-        if (webhookSecret && req.headers['stripe-signature'] && !isTestMode) {
-          event = getStripe().webhooks.constructEvent(req.body, req.headers['stripe-signature'], webhookSecret);
+        const stripe = getStripe();
+        if (webhookSecret && req.headers['stripe-signature'] && !isTestMode && stripe) {
+          event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], webhookSecret);
         } else {
           event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         }
-      } catch () {
+      } catch {
         return res.status(400).json({ error: 'Webhook error' });
       }
 
@@ -263,7 +270,8 @@ export default async function handler(req, res) {
     }
 
     return res.status(404).json({ error: 'Not found' });
-  } catch () {
+  } catch (error) {
+    console.error('API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
