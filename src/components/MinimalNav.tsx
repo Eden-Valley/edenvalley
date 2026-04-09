@@ -16,8 +16,21 @@ const MinimalNav = () => (
       </Link>
     </div>
     
-    <div className="pointer-events-auto flex items-center gap-8">
-      {/* Dynamic sound toggle will be here if needed, but it's currently in Home.tsx */}
+    <div className="pointer-events-auto flex items-center gap-6">
+      <a 
+        href="https://www.producthunt.com/posts/eden-valley" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="opacity-50 hover:opacity-100 transition-opacity"
+        title="Eden Valley on Product Hunt"
+      >
+        <img 
+          alt="Eden Valley on Product Hunt" 
+          width="150" 
+          height="32" 
+          src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1119303&theme=dark&t=1775713183398"
+        />
+      </a>
     </div>
   </nav>
 );

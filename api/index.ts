@@ -176,6 +176,35 @@ export default async function handler(req, res) {
       }
     }
 
+    if (pathname === '/api/admin/review') {
+      if (!requireAdmin(req.headers.authorization)) return res.status(401).json({ error: 'Unauthorized' });
+      if (method !== 'POST') return res.status(405).end();
+
+      const { userId, action } = req.body || {};
+      const sql = getSql();
+
+      if (action === 'accept') {
+        await sql`UPDATE profiles SET status = 'accepted', updated_at = NOW() WHERE user_id = ${userId}`;
+        const user = await sql`SELECT email FROM users WHERE id = ${userId}`;
+        if (user.length > 0) await sendWelcomeEmail(user[0].email);
+        return res.status(200).json({ success: true });
+      }
+
+      if (action === 'reject') {
+        await sql`UPDATE profiles SET status = 'rejected', updated_at = NOW() WHERE user_id = ${userId}`;
+        const user = await sql`SELECT email FROM users WHERE id = ${userId}`;
+        if (user.length > 0) await sendRejectionEmail(user[0].email);
+        return res.status(200).json({ success: true });
+      }
+
+      if (action === 'start_review') {
+        await sql`UPDATE profiles SET status = 'under_review', updated_at = NOW() WHERE user_id = ${userId}`;
+        return res.status(200).json({ success: true });
+      }
+
+      return res.status(400).json({ error: 'Invalid action' });
+    }
+
     if (pathname === '/api/cron/process-refunds') {
       if (process.env.CRON_SECRET && req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
         return res.status(401).json({ error: 'Unauthorized' });
