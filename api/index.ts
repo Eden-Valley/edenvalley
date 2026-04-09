@@ -46,13 +46,15 @@ async function initDb() {
 }
 
 async function sendEmail(to: string, subject: string, html: string) {
+  console.log('Attempting to send email to:', to, 'subject:', subject);
   try {
     const resend = getResend();
     if (!resend) {
       console.error('Resend not initialized - check RESEND_API_KEY');
       return false;
     }
-    await resend.emails.send({ from: 'Eden Valley <no-reply@edenvalley.at.eu.org>', to, subject, html });
+    const result = await resend.emails.send({ from: 'Eden Valley <onboarding@resend.dev>', to, subject, html });
+    console.log('Email sent successfully:', result);
     return true;
   } catch (e: any) {
     console.error('Email send failed:', e?.message || e);
