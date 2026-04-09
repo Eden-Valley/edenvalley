@@ -222,9 +222,11 @@ export default async function handler(req, res) {
       if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         const email = session.customer_details?.email;
+        const paymentIntent = session.payment_intent || session.id;
         if (email) {
           const sql = getSql();
-          await sql`UPDATE profiles SET payment_status = 'paid', status = 'priority', priority_deadline_at = NOW() + INTERVAL '72 hours', stripe_payment_intent_id = ${session.payment_intent || session.id} WHERE user_id = (SELECT id FROM users WHERE email = ${email})`;
+          await sql`UPDATE profiles SET payment_status = 'paid', status = 'priority', priority_deadline_at = NOW() + INTERVAL '72 hours', stripe_payment_intent_id = ${paymentIntent} WHERE user_id = (SELECT id FROM users WHERE email = ${email} ORDER BY created_at DESC LIMIT 1)`;
+          console.log(`✅ Payment confirmed for ${email}`);
           await sendPriorityEmail(email);
         }
       }
