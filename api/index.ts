@@ -321,13 +321,24 @@ export default async function handler(req: any, res: any) {
     }
 
     if (pathname === '/api/admin/profiles') {
-      if (!requireAdmin(req.headers.authorization)) return res.status(401).json({ error: 'Unauthorized' });
+      console.log('Admin profiles request, auth:', req.headers.authorization?.substring(0, 20));
+      if (!requireAdmin(req.headers.authorization)) {
+        console.log('Admin auth failed');
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
 
       const sql = getSql();
 
       if (method === 'GET') {
-        const profiles = await sql`SELECT u.id as user_id, u.email, u.first_name, u.last_name, u.role, u.language, u.created_at, p.* FROM users u JOIN profiles p ON u.id = p.user_id WHERE p.status IN ('pending', 'priority', 'under_review') ORDER BY CASE p.status WHEN 'priority' THEN 1 WHEN 'under_review' THEN 2 ELSE 3 END, p.priority_deadline_at ASC NULLS LAST, u.created_at ASC`;
-        return res.status(200).json({ profiles });
+        try {
+          console.log('Fetching profiles...');
+          const profiles = await sql`SELECT u.id as user_id, u.email, u.first_name, u.last_name, u.role, u.language, u.created_at, p.* FROM users u JOIN profiles p ON u.id = p.user_id WHERE p.status IN ('pending', 'priority', 'under_review') ORDER BY CASE p.status WHEN 'priority' THEN 1 WHEN 'under_review' THEN 2 ELSE 3 END, p.priority_deadline_at ASC NULLS LAST, u.created_at ASC`;
+          console.log('Profiles fetched:', profiles.length);
+          return res.status(200).json({ profiles });
+        } catch (e: any) {
+          console.error('Profiles fetch error:', e.message);
+          return res.status(500).json({ error: 'Database error', detail: e.message });
+        }
       }
     }
 
@@ -439,9 +450,9 @@ export default async function handler(req: any, res: any) {
     }
 
     return res.status(404).json({ error: 'Not found' });
-  } catch (error) {
-    console.error('API error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('API error:', error?.message || error);
+    return res.status(500).json({ error: 'Internal server error', detail: error?.message });
   }
 }
 
