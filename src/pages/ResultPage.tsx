@@ -61,6 +61,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
           proofOfWork: formData.proofOfWork || '',
         });
         setShowPendingOptions(true);
+        setSubmitting(false);
         // Clear the session storage
         sessionStorage.removeItem('eden-pending-form');
         sessionStorage.removeItem('eden-pending-payment-started');
