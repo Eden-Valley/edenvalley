@@ -112,7 +112,7 @@ const Thanks = () => {
           </>
         )}
 
-        <div className="border-t border-border pt-12 md:pt-16" style={{ animation: 'fadeIn 1s ease 0.4s both' }}>
+        <div className="border-t border-border pt-8 md:pt-10" style={{ animation: 'fadeIn 1s ease 0.4s both' }}>
           <p className="font-body text-muted-foreground text-xs md:text-sm leading-relaxed mb-6 md:mb-8">{t('thanks.share')}</p>
           
           {error && <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded"><p className="text-destructive text-sm break-words">{error}</p></div>}
