@@ -38,39 +38,37 @@ const ResultPage = ({ type }: ResultPageProps) => {
   const [loaded, setLoaded] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showPendingOptions, setShowPendingOptions] = useState(false);
   
   const cooldownRef = useRef(false);
   const touchStartY = useRef(0);
 
-  // Reset submitting state and handle navigation on page load
+  // Check for pending form data from Stripe return
   useEffect(() => {
-    const userId = localStorage.getItem('eden-user-id');
-    const pendingPayment = localStorage.getItem('eden-pending-payment');
+    const pendingForm = sessionStorage.getItem('eden-pending-form');
+    const startedAt = sessionStorage.getItem('eden-pending-payment-started');
     
-    // If user already has a submission and is coming back from Stripe
-    if (userId && pendingPayment) {
-      // User submitted and is returning - navigate to thanks
-      navigate('/thanks?tier=priority');
-      return;
-    }
-    
-    // If user already submitted (no pending payment)
-    if (userId) {
-      navigate('/thanks?tier=standard');
-      return;
-    }
-    
-    // If there's a stale pending payment (user went to Stripe but came back without paying)
-    if (pendingPayment) {
-      const { timestamp } = JSON.parse(pendingPayment);
-      const fiveMinutes = 5 * 60 * 1000;
-      if (Date.now() - timestamp > fiveMinutes) {
-        // Pending payment expired, clear it
-        localStorage.removeItem('eden-pending-payment');
-        setSubmitting(false);
+    if (pendingForm && startedAt) {
+      const elapsed = Date.now() - parseInt(startedAt);
+      // If user spent at least 3 seconds away, they probably went to Stripe
+      if (elapsed > 3000) {
+        const formData = JSON.parse(pendingForm);
+        setForm({
+          firstName: formData.firstName || '',
+          lastName: formData.lastName || '',
+          email: formData.email || '',
+          vision: formData.vision || '',
+          proofOfWork: formData.proofOfWork || '',
+        });
+        setShowPendingOptions(true);
+        // Clear the session storage
+        sessionStorage.removeItem('eden-pending-form');
+        sessionStorage.removeItem('eden-pending-payment-started');
+      } else {
+        // Too fast, probably page refresh - clear
+        sessionStorage.removeItem('eden-pending-form');
+        sessionStorage.removeItem('eden-pending-payment-started');
       }
-      // If less than 5 minutes, keep showing submitting state
-      // (user might still be on Stripe)
     }
   }, [navigate]);
 
@@ -161,6 +159,23 @@ const ResultPage = ({ type }: ResultPageProps) => {
 
     setSubmitting(true);
 
+    // If priority, redirect to Stripe immediately without submitting form
+    if (tier === 'priority') {
+      const referredBy = new URLSearchParams(window.location.search).get('ref') || undefined;
+      // Store form data for after Stripe return
+      sessionStorage.setItem('eden-pending-form', JSON.stringify({
+        ...form,
+        type,
+        tier,
+        referredBy,
+        language: localStorage.getItem('eden-language') || 'en',
+      }));
+      sessionStorage.setItem('eden-pending-payment-started', Date.now().toString());
+      window.location.href = STRIPE_PAYMENT_LINK;
+      return; // Don't submit form yet
+    }
+
+    // Standard submission
     try {
       const referredBy = new URLSearchParams(window.location.search).get('ref') || undefined;
 
@@ -188,17 +203,25 @@ const ResultPage = ({ type }: ResultPageProps) => {
       localStorage.setItem('eden-referral-code', result.referralCode);
 
       playSound('success');
-
-      if (tier === 'priority') {
-        localStorage.setItem('eden-pending-payment', JSON.stringify({ timestamp: Date.now() }));
-        window.location.href = STRIPE_PAYMENT_LINK;
-      } else {
-        navigate('/thanks?tier=standard');
-      }
+      navigate('/thanks?tier=standard');
     } catch {
       setSubmitError('Failed to submit. Please try again.');
       setSubmitting(false);
     }
+  };
+
+  // Handle returning from Stripe (with or without payment)
+  const handleStripeReturn = async () => {
+    const pendingForm = sessionStorage.getItem('eden-pending-form');
+    const startedAt = sessionStorage.getItem('eden-pending-payment-started');
+    
+    if (!pendingForm || !startedAt) return false;
+    
+    // Check if user has been away for a reasonable time (came back from Stripe)
+    const elapsed = Date.now() - parseInt(startedAt);
+    if (elapsed < 5000) return false; // Too fast, probably didn't actually go to Stripe
+    
+    return true;
   };
 
   const fc = (i: number) => {
@@ -353,31 +376,56 @@ const ResultPage = ({ type }: ResultPageProps) => {
                 </div>
               )}
 
-              <div className="space-y-3 pt-2">
-                <button
-                  type="button"
-                  onClick={(e) => handleSubmit(e, 'standard')}
-                  disabled={submitting}
-                  className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest border border-muted-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? t('result.submitting') : t('result.standardAdmission')}
-                </button>
-                <p className="text-micro text-muted-foreground/50 text-center">{t('result.standardTime')}</p>
+              {showPendingOptions ? (
+                <div className="space-y-4 pt-4 border-t border-border">
+                  <p className="text-sm text-foreground font-body">You visited the payment page. Would you like to:</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sessionStorage.setItem('eden-pending-form', JSON.stringify(form));
+                      sessionStorage.setItem('eden-pending-payment-started', Date.now().toString());
+                      window.location.href = STRIPE_PAYMENT_LINK;
+                    }}
+                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest bg-primary border border-primary text-background hover:bg-primary/90 transition-all duration-300"
+                  >
+                    Complete Payment ($49)
+                  </button>
+                  <p className="text-micro text-muted-foreground/50 text-center">or</p>
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, 'standard')}
+                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest border border-muted-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-300"
+                  >
+                    Submit for Free
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, 'standard')}
+                    disabled={submitting}
+                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest border border-muted-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? t('result.submitting') : t('result.standardAdmission')}
+                  </button>
+                  <p className="text-micro text-muted-foreground/50 text-center">{t('result.standardTime')}</p>
 
-                <button
-                  type="button"
-                  onClick={(e) => handleSubmit(e, 'priority')}
-                  disabled={submitting}
-                  className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest bg-primary border border-primary text-background hover:bg-primary/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? t('result.submitting') : t('result.priorityFastTrack')}
-                </button>
-                <p className="text-micro text-muted-foreground/50 text-center">{t('result.priorityTime')}</p>
-                <p className="text-micro text-green-500/80 text-center">{t('result.refundGuarantee')}</p>
-                <p className="text-micro text-muted-foreground/60 text-center">{t('result.refundSpeedNote')}</p>
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, 'priority')}
+                    disabled={submitting}
+                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest bg-primary border border-primary text-background hover:bg-primary/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? t('result.submitting') : t('result.priorityFastTrack')}
+                  </button>
+                  <p className="text-micro text-muted-foreground/50 text-center">{t('result.priorityTime')}</p>
+                  <p className="text-micro text-green-500/80 text-center">{t('result.refundGuarantee')}</p>
+                  <p className="text-micro text-muted-foreground/60 text-center">{t('result.refundSpeedNote')}</p>
 
-                <p className="text-micro text-muted-foreground/40 text-center pt-1">{t('result.paymentNote')}</p>
-              </div>
+                  <p className="text-micro text-muted-foreground/40 text-center pt-1">{t('result.paymentNote')}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
