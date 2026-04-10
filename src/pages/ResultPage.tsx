@@ -42,23 +42,35 @@ const ResultPage = ({ type }: ResultPageProps) => {
   const cooldownRef = useRef(false);
   const touchStartY = useRef(0);
 
-  // Reset submitting state if user returned without paying
+  // Reset submitting state and handle navigation on page load
   useEffect(() => {
+    const userId = localStorage.getItem('eden-user-id');
     const pendingPayment = localStorage.getItem('eden-pending-payment');
+    
+    // If user already has a submission and is coming back from Stripe
+    if (userId && pendingPayment) {
+      // User submitted and is returning - navigate to thanks
+      navigate('/thanks?tier=priority');
+      return;
+    }
+    
+    // If user already submitted (no pending payment)
+    if (userId) {
+      navigate('/thanks?tier=standard');
+      return;
+    }
+    
+    // If there's a stale pending payment (user went to Stripe but came back without paying)
     if (pendingPayment) {
       const { timestamp } = JSON.parse(pendingPayment);
       const fiveMinutes = 5 * 60 * 1000;
       if (Date.now() - timestamp > fiveMinutes) {
+        // Pending payment expired, clear it
         localStorage.removeItem('eden-pending-payment');
         setSubmitting(false);
       }
-    }
-    
-    // If user already has a submission, navigate to thanks
-    const userId = localStorage.getItem('eden-user-id');
-    if (userId) {
-      const tier = localStorage.getItem('eden-pending-payment') ? 'priority' : 'standard';
-      navigate(`/thanks?tier=${tier}`);
+      // If less than 5 minutes, keep showing submitting state
+      // (user might still be on Stripe)
     }
   }, [navigate]);
 

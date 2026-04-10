@@ -210,11 +210,15 @@ async function sendStyledEmail(to: string, type: string, lang: string, magicToke
 async function initDb() {
   const sql = getSql();
   await sql`CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), email TEXT UNIQUE NOT NULL, first_name TEXT, last_name TEXT, role TEXT, is_validated BOOLEAN DEFAULT FALSE, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
-  await sql`CREATE TABLE IF NOT EXISTS profiles (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID REFERENCES users(id) ON DELETE CASCADE, type TEXT, vision TEXT, proof_of_work TEXT, proof_of_identity TEXT, investor_type TEXT, preferred_stage TEXT, sectors TEXT, ticket_size TEXT, status TEXT DEFAULT 'pending', payment_status TEXT DEFAULT 'unpaid', priority_deadline_at TIMESTAMP WITH TIME ZONE, stripe_payment_intent_id TEXT, refund_status TEXT DEFAULT NULL, refund_id TEXT DEFAULT NULL, referral_code TEXT UNIQUE, referred_by TEXT, updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
+  await sql`CREATE TABLE IF NOT EXISTS profiles (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID REFERENCES users(id) ON DELETE CASCADE, type TEXT, vision TEXT, proof_of_work TEXT, proof_of_identity TEXT, investor_type TEXT, preferred_stage TEXT, sectors TEXT, ticket_size TEXT, status TEXT DEFAULT 'pending', payment_status TEXT DEFAULT 'unpaid', priority_deadline_at TIMESTAMP WITH TIME ZONE, stripe_payment_intent_id TEXT, refund_status TEXT DEFAULT NULL, refund_id TEXT DEFAULT NULL, referral_code TEXT UNIQUE, referred_by TEXT, requested_tier TEXT DEFAULT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
   await sql`CREATE TABLE IF NOT EXISTS magic_tokens (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID REFERENCES users(id) ON DELETE CASCADE, token TEXT UNIQUE NOT NULL, expires_at TIMESTAMP WITH TIME ZONE NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
   
   try {
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'en'`;
+  } catch {}
+  
+  try {
+    await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS requested_tier TEXT DEFAULT NULL`;
   } catch {}
 }
 
@@ -287,13 +291,12 @@ export default async function handler(req: any, res: any) {
       if (existing.length > 0) return res.status(400).json({ error: 'Email already registered' });
 
       const referralCode = `EV-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      const status = tier === 'priority' ? 'priority' : 'pending';
       const userLang = language || 'en';
 
       const userResult = await sql`INSERT INTO users (email, first_name, last_name, role, language) VALUES (${email}, ${firstName}, ${lastName}, ${type}, ${userLang}) RETURNING id`;
-      await sql`INSERT INTO profiles (user_id, type, vision, proof_of_work, status, payment_status, referral_code, referred_by) VALUES (${userResult[0].id}, ${type}, ${vision}, ${proofOfWork}, ${status}, 'unpaid', ${referralCode}, ${referredBy || null})`;
+      await sql`INSERT INTO profiles (user_id, type, vision, proof_of_work, status, payment_status, referral_code, referred_by, requested_tier) VALUES (${userResult[0].id}, ${type}, ${vision}, ${proofOfWork}, 'pending', 'unpaid', ${referralCode}, ${referredBy || null}, ${tier || null})`;
 
-      return res.status(200).json({ success: true, userId: userResult[0].id, referralCode, status });
+      return res.status(200).json({ success: true, userId: userResult[0].id, referralCode, status: 'pending', tier: tier });
     }
 
     if (pathname === '/api/funders' && method === 'POST') {
