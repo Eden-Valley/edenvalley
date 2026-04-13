@@ -22,7 +22,7 @@ interface ResultPageProps {
   type: 'thinker' | 'doer';
 }
 
-const TOTAL_FRAMES = 14;
+const TOTAL_FRAMES = 15;
 const COOLDOWN_DURATION = 1200;
 const STRIPE_PAYMENT_LINK = import.meta.env.VITE_STRIPE_PAYMENT_LINK || 'https://buy.stripe.com/00wfZbfZF3jncTvaEV0kE00';
 const API_URL = typeof window !== 'undefined' ? `${window.location.origin}/api` : '/api';
@@ -386,7 +386,7 @@ const ResultPage = ({ type }: ResultPageProps) => {
           </div>
         </div>
 
-        {/* 12: Form — Names, Email & Proof of Work */}
+        {/* 12: Form — Names, Email */}
         <div className={`frame-3d ${fc(12)}`}>
           <div className="max-w-md w-full px-4 md:px-8 mx-auto h-full flex flex-col justify-center pt-16 md:pt-20 pb-6">
             <div className="space-y-2 md:space-y-3 reveal-up-premium">
@@ -404,13 +404,36 @@ const ResultPage = ({ type }: ResultPageProps) => {
                 <label className="text-[10px] uppercase tracking-wider text-muted-foreground block">{t('result.email')}</label>
                 <input className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} onFocus={() => playSound('focus')} />
               </div>
+              {/* Scroll hint */}
+              <div className="flex flex-col items-center gap-1 mt-3 reveal-up">
+                <div className="w-[1px] h-4 bg-gradient-to-b from-transparent to-primary/40" />
+                <span className="text-muted-foreground/50 text-[10px] tracking-widest uppercase">{t('result.scrollToContinue')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 13: Form — Proof of Work (Type-specific) */}
+        <div className={`frame-3d ${fc(13)}`}>
+          <div className="max-w-md w-full px-4 md:px-8 mx-auto h-full flex flex-col justify-center pt-16 md:pt-20 pb-6">
+            <div className="space-y-2 md:space-y-3 reveal-up-premium">
               <div className="space-y-0.5">
                 <label className="text-[10px] uppercase tracking-wider text-muted-foreground block">
-                  {t('result.proofOfWork')} <span className="text-eden-crimson">*</span>
+                  {isThinker ? t('thinker.proofOfVision') : t('doer.proofOfWork')} <span className="text-eden-crimson">*</span>
                 </label>
-                <input className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="url" placeholder="https://github.com/, https://crunchbase.com/, ..." required value={form.proofOfWork} onChange={e => setForm({ ...form, proofOfWork: e.target.value })} onFocus={() => playSound('focus')} />
+                <input 
+                  className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" 
+                  type="url" 
+                  placeholder={isThinker ? "https://docs.google.com/..., https://figma.com/..., ..." : "https://github.com/, https://crunchbase.com/..., ..."} 
+                  required 
+                  value={form.proofOfWork} 
+                  onChange={e => setForm({ ...form, proofOfWork: e.target.value })} 
+                  onFocus={() => playSound('focus')} 
+                />
                 {errors.proofOfWork && <p className="text-eden-crimson text-xs block ml-1">{errors.proofOfWork}</p>}
-                <p className="text-[10px] text-muted-foreground/60 block">{t('result.proofOfWorkDesc')}</p>
+                <p className="text-[10px] text-muted-foreground/60 block">
+                  {isThinker ? t('thinker.proofOfVisionDesc') : t('doer.proofOfWorkDesc')}
+                </p>
               </div>
               {/* Scroll hint */}
               <div className="flex flex-col items-center gap-1 mt-3 reveal-up">
@@ -421,8 +444,8 @@ const ResultPage = ({ type }: ResultPageProps) => {
           </div>
         </div>
 
-        {/* 13: Form — Vision & Submit */}
-        <div className={`frame-3d ${fc(13)}`}>
+        {/* 14: Form — Vision/Energy & Submit */}
+        <div className={`frame-3d ${fc(14)}`}>
           <div className="max-w-md w-full px-4 md:px-8 mx-auto h-full flex flex-col justify-center pt-16 md:pt-20 pb-6">
             <div className="space-y-2 md:space-y-3 reveal-up-premium">
               <div className="space-y-0.5">
