@@ -26,7 +26,11 @@ const FounderTest = () => {
 
   const showResult = (s: { a: number; b: number }) => {
     setAnalyzing(true);
-    setTimeout(() => navigate(s.a >= s.b ? '/result/thinker' : '/result/doer'), 2500);
+    const resultType = s.a >= s.b ? 'thinker' : 'doer';
+    // Store test result for ResultPage access control
+    sessionStorage.setItem('eden-test-result', JSON.stringify({ type: resultType, scores: s }));
+    sessionStorage.setItem('eden-test-completed', 'true');
+    setTimeout(() => navigate(`/result/${resultType}`), 2500);
   };
 
   const answer = (choice: 'a' | 'b') => {
