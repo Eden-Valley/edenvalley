@@ -39,9 +39,30 @@ const ResultPage = ({ type }: ResultPageProps) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showPendingOptions, setShowPendingOptions] = useState(false);
+  const [showExecutiveExplainer, setShowExecutiveExplainer] = useState(false);
   
   const cooldownRef = useRef(false);
   const touchStartY = useRef(0);
+
+  // Check if user has completed the test and has valid access to this result page
+  useEffect(() => {
+    const testResult = sessionStorage.getItem('eden-test-result');
+    const completedTest = sessionStorage.getItem('eden-test-completed');
+    
+    // If no test result or test not completed, redirect to test page
+    if (!testResult || !completedTest) {
+      navigate('/test');
+      return;
+    }
+    
+    // If user is trying to access a result page that doesn't match their result
+    const userResult = JSON.parse(testResult);
+    if (userResult.type !== type) {
+      // Redirect to their correct result page
+      navigate(`/result/${userResult.type}`);
+      return;
+    }
+  }, [navigate, type]);
 
   // Check for pending form data from Stripe return
   useEffect(() => {
@@ -283,23 +304,50 @@ const ResultPage = ({ type }: ResultPageProps) => {
         </div>
 
         {/* 2-5: Pain frames */}
-        {[2, 3, 4, 5].map((i) => (
+        {[2, 3, 4].map((i) => (
           <div key={i} className={`frame-3d ${fc(i)}`}>
-            <div className="max-w-3xl px-6 md:px-12 text-center">
-              <span className="text-micro text-muted-foreground block mb-4 md:mb-6 reveal-up-premium">{t('result.thePain')}</span>
-              <p className="font-display text-large text-foreground font-light leading-relaxed reveal-text-premium">
+            <div className="max-w-3xl px-4 md:px-12 text-center">
+              <span className="text-micro text-muted-foreground block mb-3 md:mb-6 reveal-up-premium">{t('result.thePain')}</span>
+              <p className="font-display text-foreground font-light leading-relaxed reveal-text-premium" style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)' }}>
                 {t(`${type}.pain${i - 1}`)}
               </p>
             </div>
           </div>
         ))}
 
+        {/* Frame 5: Pain 4 - Executive Dysfunction (with explainer for Thinkers) */}
+        <div className={`frame-3d ${fc(5)}`}>
+          <div className="max-w-3xl px-4 md:px-12 text-center">
+            <span className="text-micro text-muted-foreground block mb-3 md:mb-6 reveal-up-premium">{t('result.thePain')}</span>
+            <p className="font-display text-foreground font-light leading-relaxed reveal-text-premium mb-4 md:mb-6" style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)' }}>
+              {t(`${type}.pain4`)}
+            </p>
+            {isThinker && (
+              <div className="reveal-up-premium">
+                <button
+                  onClick={() => setShowExecutiveExplainer(!showExecutiveExplainer)}
+                  className="text-[10px] uppercase tracking-wider text-primary/70 hover:text-primary transition-colors border-b border-primary/30 pb-0.5"
+                >
+                  {showExecutiveExplainer ? '− Less info' : '+ What is executive dysfunction?'}
+                </button>
+                {showExecutiveExplainer && (
+                  <div className="mt-4 p-3 md:p-4 bg-card/30 border border-primary/10 rounded max-w-2xl mx-auto">
+                    <p className="font-body text-muted-foreground text-xs md:text-sm leading-relaxed text-left">
+                      {t('thinker.executiveDysfunctionExplainer')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* 6-9: Relief frames */}
         {[6, 7, 8, 9].map((i) => (
           <div key={i} className={`frame-3d ${fc(i)}`}>
-            <div className="max-w-3xl px-6 md:px-12 text-center">
-              <span className="text-micro text-muted-foreground block mb-4 md:mb-6 reveal-up-premium">{t('result.theRelief')}</span>
-              <p className="font-display text-large text-foreground font-light leading-relaxed reveal-text-premium">
+            <div className="max-w-3xl px-4 md:px-12 text-center">
+              <span className="text-micro text-muted-foreground block mb-3 md:mb-6 reveal-up-premium">{t('result.theRelief')}</span>
+              <p className="font-display text-foreground font-light leading-relaxed reveal-text-premium" style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)' }}>
                 {t(`${type}.relief${i - 5}`)}
               </p>
             </div>
@@ -308,10 +356,25 @@ const ResultPage = ({ type }: ResultPageProps) => {
 
         {/* 10: Revelation */}
         <div className={`frame-3d ${fc(10)}`}>
-          <div className="max-w-4xl px-6 md:px-12 text-center">
-            <p className="font-display text-impact text-foreground font-medium leading-tight reveal-text-premium">
+          <div className="max-w-4xl px-4 md:px-12 text-center space-y-4 md:space-y-6">
+            {/* Main revelation text - medium size */}
+            <p className="font-display text-foreground font-light leading-relaxed reveal-text-premium" style={{ fontSize: 'clamp(1rem, 3vw, 1.4rem)' }}>
               {t(`${type}.revelation`)}
             </p>
+
+            {/* Team emphasis - larger, primary color, more prominent */}
+            <div className="py-3 md:py-4 border-y border-primary/20 reveal-up-premium">
+              <p className="font-display text-primary font-medium leading-tight" style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)' }}>
+                {t(`${type}.revelationTeam`)}
+              </p>
+            </div>
+
+            {/* Closing statement - for Thinkers only */}
+            {isThinker && (
+              <p className="font-body text-muted-foreground italic reveal-up-premium" style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)' }}>
+                {t('thinker.revelationClose')}
+              </p>
+            )}
           </div>
         </div>
 
@@ -325,37 +388,34 @@ const ResultPage = ({ type }: ResultPageProps) => {
 
         {/* 12: Form — Names, Email & Proof of Work */}
         <div className={`frame-3d ${fc(12)}`}>
-          <div className="max-w-md w-full px-6 md:px-8 mx-auto h-full flex flex-col pt-24 pb-8 overflow-y-auto">
-            <div className="space-y-4 md:space-y-5 reveal-up-premium min-h-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-micro text-muted-foreground block ml-1">{t('result.firstName')}</label>
-                  <input className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" required value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} onFocus={() => playSound('focus')} />
+          <div className="max-w-md w-full px-4 md:px-8 mx-auto h-full flex flex-col justify-center pt-16 md:pt-20 pb-6">
+            <div className="space-y-2 md:space-y-3 reveal-up-premium">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="space-y-0.5">
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground block">{t('result.firstName')}</label>
+                  <input className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" required value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} onFocus={() => playSound('focus')} />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-micro text-muted-foreground block ml-1">{t('result.lastName')}</label>
-                  <input className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" required value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} onFocus={() => playSound('focus')} />
+                <div className="space-y-0.5">
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground block">{t('result.lastName')}</label>
+                  <input className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" required value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} onFocus={() => playSound('focus')} />
                 </div>
               </div>
-              <div className="space-y-1">
-                <label className="text-micro text-muted-foreground block ml-1">{t('result.email')}</label>
-                <input className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} onFocus={() => playSound('focus')} />
+              <div className="space-y-0.5">
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground block">{t('result.email')}</label>
+                <input className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} onFocus={() => playSound('focus')} />
               </div>
-              <div className="space-y-1">
-                <label className="text-micro text-muted-foreground block ml-1">
+              <div className="space-y-0.5">
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground block">
                   {t('result.proofOfWork')} <span className="text-eden-crimson">*</span>
                 </label>
-                <input className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="url" placeholder="https://github.com/, https://crunchbase.com/, ..." required value={form.proofOfWork} onChange={e => setForm({ ...form, proofOfWork: e.target.value })} onFocus={() => playSound('focus')} />
-                {errors.proofOfWork && <p className="text-eden-crimson text-micro block ml-1">{errors.proofOfWork}</p>}
-                <p className="text-micro text-muted-foreground/60 block ml-1">{t('result.proofOfWorkDesc')}</p>
+                <input className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors" type="url" placeholder="https://github.com/, https://crunchbase.com/, ..." required value={form.proofOfWork} onChange={e => setForm({ ...form, proofOfWork: e.target.value })} onFocus={() => playSound('focus')} />
+                {errors.proofOfWork && <p className="text-eden-crimson text-xs block ml-1">{errors.proofOfWork}</p>}
+                <p className="text-[10px] text-muted-foreground/60 block">{t('result.proofOfWorkDesc')}</p>
               </div>
-              
-              {/* Scroll indicator */}
-              <div className="flex flex-col items-center mt-6 animate-bounce">
-                <span className="text-micro text-primary/60 mb-2">{t('result.scrollToContinue')}</span>
-                <svg className="w-4 h-4 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
+              {/* Scroll hint */}
+              <div className="flex flex-col items-center gap-1 mt-3 reveal-up">
+                <div className="w-[1px] h-4 bg-gradient-to-b from-transparent to-primary/40" />
+                <span className="text-muted-foreground/50 text-[10px] tracking-widest uppercase">{t('result.scrollToContinue')}</span>
               </div>
             </div>
           </div>
@@ -363,23 +423,23 @@ const ResultPage = ({ type }: ResultPageProps) => {
 
         {/* 13: Form — Vision & Submit */}
         <div className={`frame-3d ${fc(13)}`}>
-          <div className="max-w-md w-full px-6 md:px-8 mx-auto h-full flex flex-col pt-24 pb-8 overflow-y-auto">
-            <div className="space-y-4 md:space-y-5 reveal-up-premium min-h-0">
-              <div className="space-y-1">
-                <label className="text-micro text-muted-foreground block ml-1">{isThinker ? 'Vision' : 'Energy'}</label>
-                <textarea className="w-full px-3 py-2 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors resize-none" rows={3} placeholder={t(`${type}.placeholder`)} value={form.vision} onChange={e => setForm({ ...form, vision: e.target.value })} onFocus={() => playSound('focus')} />
-                {errors.vision && <p className="text-eden-crimson text-micro block ml-1">{errors.vision}</p>}
+          <div className="max-w-md w-full px-4 md:px-8 mx-auto h-full flex flex-col justify-center pt-16 md:pt-20 pb-6">
+            <div className="space-y-2 md:space-y-3 reveal-up-premium">
+              <div className="space-y-0.5">
+                <label className="text-[10px] uppercase tracking-wider text-muted-foreground block">{isThinker ? 'Vision' : 'Energy'}</label>
+                <textarea className="w-full px-3 py-1.5 bg-card/50 border border-border text-foreground text-sm outline-none focus:border-primary transition-colors resize-none" rows={2} placeholder={t(`${type}.placeholder`)} value={form.vision} onChange={e => setForm({ ...form, vision: e.target.value })} onFocus={() => playSound('focus')} />
+                {errors.vision && <p className="text-eden-crimson text-xs block ml-1">{errors.vision}</p>}
               </div>
 
               {submitError && (
-                <div className="p-3 bg-destructive/10 border border-destructive/30 rounded">
-                  <p className="text-destructive text-sm">{submitError}</p>
+                <div className="p-2 bg-destructive/10 border border-destructive/30 rounded">
+                  <p className="text-destructive text-xs">{submitError}</p>
                 </div>
               )}
 
               {showPendingOptions ? (
-                <div className="space-y-4 pt-4 border-t border-border">
-                  <p className="text-sm text-foreground font-body">You visited the payment page. Would you like to:</p>
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <p className="text-xs text-foreground font-body">You visited the payment page. Would you like to:</p>
                   <button
                     type="button"
                     onClick={() => {
@@ -387,36 +447,36 @@ const ResultPage = ({ type }: ResultPageProps) => {
                       sessionStorage.setItem('eden-pending-payment-started', Date.now().toString());
                       window.location.href = STRIPE_PAYMENT_LINK;
                     }}
-                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest bg-primary border border-primary text-background hover:bg-primary/90 transition-all duration-300"
+                    className="w-full py-2.5 px-4 font-body text-xs uppercase tracking-widest bg-primary border border-primary text-background hover:bg-primary/90 transition-all duration-300"
                   >
                     Complete Payment ($49)
                   </button>
-                  <p className="text-micro text-muted-foreground/50 text-center">or</p>
+                  <p className="text-[10px] text-muted-foreground/50 text-center">or</p>
                   <button
                     type="button"
                     onClick={(e) => handleSubmit(e, 'standard')}
-                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest border border-muted-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-300"
+                    className="w-full py-2.5 px-4 font-body text-xs uppercase tracking-widest border border-muted-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-300"
                   >
                     Submit for Free
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3 pt-2">
+                <div className="space-y-2 pt-2">
                   <button
                     type="button"
                     onClick={(e) => handleSubmit(e, 'standard')}
                     disabled={submitting}
-                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest border border-muted-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2.5 px-4 font-body text-xs uppercase tracking-widest border border-muted-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? t('result.submitting') : t('result.standardAdmission')}
                   </button>
-                  <p className="text-micro text-muted-foreground/50 text-center">{t('result.standardTime')}</p>
+                  <p className="text-[10px] text-muted-foreground/50 text-center">{t('result.standardTime')}</p>
 
                   <button
                     type="button"
                     onClick={(e) => handleSubmit(e, 'priority')}
                     disabled={submitting}
-                    className="w-full py-3 px-4 font-body text-sm uppercase tracking-widest bg-primary border border-primary text-background hover:bg-primary/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2.5 px-4 font-body text-xs uppercase tracking-widest bg-primary border border-primary text-background hover:bg-primary/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? t('result.submitting') : t('result.priorityFastTrack')}
                   </button>

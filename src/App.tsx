@@ -13,6 +13,11 @@ import ResultPage from "./pages/ResultPage";
 import Thanks from "./pages/Thanks";
 import Funder from "./pages/Funder";
 import FunderThanks from "./pages/FunderThanks";
+import Thinker from "./pages/Thinker";
+import Doer from "./pages/Doer";
+import FundBridge from "./pages/FundBridge";
+import FundCrowd from "./pages/FundCrowd";
+import FundPro from "./pages/FundPro";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -58,6 +63,11 @@ const App = () => {
                 <Route path="/thanks" element={<Thanks />} />
                 <Route path="/funder" element={<Funder />} />
                 <Route path="/funder-thanks" element={<FunderThanks />} />
+                <Route path="/thinker" element={<Thinker />} />
+                <Route path="/doer" element={<Doer />} />
+                <Route path="/fund" element={<FundBridge />} />
+                <Route path="/fund/crowd" element={<FundCrowd />} />
+                <Route path="/fund/pro" element={<FundPro />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />

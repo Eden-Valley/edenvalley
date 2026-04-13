@@ -31,6 +31,7 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState('');
   const [password, setPassword] = useState('');
+  const [adminEmail, setAdminEmail] = useState('');
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
@@ -41,9 +42,13 @@ const Admin = () => {
   const fetchProfiles = useCallback(async (authToken: string) => {
     setLoading(true);
     setError(null);
+    const storedEmail = sessionStorage.getItem('eden-admin-email') || '';
     try {
       const res = await fetch(`${API_URL}/admin/profiles`, {
-        headers: { 'Authorization': `Bearer ${authToken}` }
+        headers: { 
+          'Authorization': `Bearer ${authToken}`,
+          'X-Admin-Email': storedEmail
+        }
       });
       if (!res.ok) {
         if (res.status === 401) {
@@ -65,8 +70,10 @@ const Admin = () => {
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('eden-admin-token');
-    if (storedToken) {
+    const storedEmail = sessionStorage.getItem('eden-admin-email');
+    if (storedToken && storedEmail) {
       setToken(storedToken);
+      setAdminEmail(storedEmail);
       setIsAuthenticated(true);
       fetchProfiles(storedToken);
     }
@@ -74,11 +81,12 @@ const Admin = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password.trim()) return;
+    if (!password.trim() || !adminEmail.trim()) return;
     
     setToken(password);
     setIsAuthenticated(true);
     sessionStorage.setItem('eden-admin-token', password);
+    sessionStorage.setItem('eden-admin-email', adminEmail);
     await fetchProfiles(password);
   };
 
@@ -86,19 +94,23 @@ const Admin = () => {
     setIsAuthenticated(false);
     setToken('');
     setPassword('');
+    setAdminEmail('');
     setProfiles([]);
     sessionStorage.removeItem('eden-admin-token');
+    sessionStorage.removeItem('eden-admin-email');
   };
 
   const handleAction = async (userId: number, action: 'accept' | 'reject' | 'start_review') => {
     setActionLoading(userId);
     setError(null);
+    const storedEmail = sessionStorage.getItem('eden-admin-email') || '';
     try {
       const res = await fetch(`${API_URL}/admin/review`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'X-Admin-Email': storedEmail
         },
         body: JSON.stringify({ userId, action })
       });
@@ -147,14 +159,21 @@ const Admin = () => {
           </div>
           
           <form onSubmit={handleLogin} className="space-y-4">
-            <div>
+            <div className="space-y-3">
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="Admin email"
+                className="w-full px-4 py-3 bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm rounded focus:outline-none focus:border-primary transition-colors"
+                autoFocus
+              />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter admin token"
                 className="w-full px-4 py-3 bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm rounded focus:outline-none focus:border-primary transition-colors"
-                autoFocus
               />
             </div>
             {error && (
@@ -164,7 +183,7 @@ const Admin = () => {
             )}
             <button 
               type="submit" 
-              disabled={!password.trim()}
+              disabled={!password.trim() || !adminEmail.trim()}
               className="w-full py-3 bg-primary text-background text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded"
             >
               ACCESS

@@ -25,11 +25,11 @@ const RoleChoice = () => {
       <div className="absolute w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full opacity-15 pointer-events-none"
         style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 70%)', animation: 'loading-breathe 5s ease-in-out infinite' }} />
 
-      <h1 className="font-display text-foreground font-extralight tracking-[0.15em] mb-12 md:mb-16 text-center" style={{ fontSize: 'clamp(1.3rem, 3vw, 2.5rem)', animation: 'reveal-text 1s cubic-bezier(0.16, 1, 0.3, 1) both' }}>
+      <h1 className="font-display text-foreground font-extralight tracking-[0.1em] md:tracking-[0.15em] mb-8 md:mb-16 text-center px-4" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 2.5rem)', animation: 'reveal-text 1s cubic-bezier(0.16, 1, 0.3, 1) both' }}>
         {t('role.title')}
       </h1>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] max-w-[900px] w-full relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] max-w-[900px] w-full relative px-4 md:px-0">
         <Link 
           to="/test" 
           className="choice-card" 
@@ -44,7 +44,7 @@ const RoleChoice = () => {
           <span className="font-mono text-xs text-primary mt-6 md:mt-8 tracking-[0.15em]">{t('role.foundCta')} →</span>
         </Link>
         <Link 
-          to="/funder" 
+          to="/fund" 
           className="choice-card" 
           onMouseEnter={() => playSound('click')}
           onClick={() => playSound('choice')}

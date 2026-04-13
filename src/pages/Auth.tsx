@@ -176,9 +176,14 @@ const Auth = () => {
 
             {isSignUp ? (
               <div className="text-center space-y-6">
-                <p className="font-body text-muted-foreground text-sm leading-relaxed">
-                  {t('auth.signUpDesc')}
-                </p>
+                <div className="space-y-3">
+                  <p className="font-mono text-primary text-xs tracking-[0.2em]">
+                    {t('auth.fourTypes')}
+                  </p>
+                  <p className="font-body text-muted-foreground text-sm leading-relaxed">
+                    {t('auth.fourTypesDesc')}
+                  </p>
+                </div>
                 <Link
                   to="/role"
                   className="eden-btn inline-block px-10 py-3 text-sm tracking-[0.2em]"

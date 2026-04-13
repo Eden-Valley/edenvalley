@@ -212,11 +212,17 @@ async function initDb() {
   await sql`CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), email TEXT UNIQUE NOT NULL, first_name TEXT, last_name TEXT, role TEXT, is_validated BOOLEAN DEFAULT FALSE, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
   await sql`CREATE TABLE IF NOT EXISTS profiles (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID REFERENCES users(id) ON DELETE CASCADE, type TEXT, vision TEXT, proof_of_work TEXT, proof_of_identity TEXT, investor_type TEXT, preferred_stage TEXT, sectors TEXT, ticket_size TEXT, status TEXT DEFAULT 'pending', payment_status TEXT DEFAULT 'unpaid', priority_deadline_at TIMESTAMP WITH TIME ZONE, stripe_payment_intent_id TEXT, refund_status TEXT DEFAULT NULL, refund_id TEXT DEFAULT NULL, referral_code TEXT UNIQUE, referred_by TEXT, requested_tier TEXT DEFAULT NULL, updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
   await sql`CREATE TABLE IF NOT EXISTS magic_tokens (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID REFERENCES users(id) ON DELETE CASCADE, token TEXT UNIQUE NOT NULL, expires_at TIMESTAMP WITH TIME ZONE NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
-  
+
+  // New tables for landing page applications
+  await sql`CREATE TABLE IF NOT EXISTS thinker_applications (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, idea TEXT NOT NULL, progress TEXT, diagnosis TEXT, status TEXT DEFAULT 'pending', created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
+  await sql`CREATE TABLE IF NOT EXISTS doer_applications (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, skill TEXT NOT NULL, shipped TEXT NOT NULL, vision TEXT, status TEXT DEFAULT 'pending', created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
+  await sql`CREATE TABLE IF NOT EXISTS backer_applications (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, amount TEXT NOT NULL, status TEXT DEFAULT 'pending', created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
+  await sql`CREATE TABLE IF NOT EXISTS investor_applications (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name TEXT NOT NULL, firm TEXT, email TEXT UNIQUE NOT NULL, ticket TEXT NOT NULL, thesis TEXT, status TEXT DEFAULT 'pending', created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)`;
+
   try {
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'en'`;
   } catch {}
-  
+
   try {
     await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS requested_tier TEXT DEFAULT NULL`;
   } catch {}
@@ -329,7 +335,7 @@ export default async function handler(req: any, res: any) {
 
     if (pathname === '/api/admin/profiles') {
       console.log('Admin profiles request, auth:', req.headers.authorization?.substring(0, 20));
-      if (!requireAdmin(req.headers.authorization)) {
+      if (!requireAdmin(req.headers.authorization, req.headers['x-admin-email'] as string | undefined)) {
         console.log('Admin auth failed');
         return res.status(401).json({ error: 'Unauthorized' });
       }
@@ -350,7 +356,7 @@ export default async function handler(req: any, res: any) {
     }
 
     if (pathname === '/api/admin/review') {
-      if (!requireAdmin(req.headers.authorization)) return res.status(401).json({ error: 'Unauthorized' });
+      if (!requireAdmin(req.headers.authorization, req.headers['x-admin-email'] as string | undefined)) return res.status(401).json({ error: 'Unauthorized' });
       if (method !== 'POST') return res.status(405).end();
 
       const { userId, action } = req.body || {};
@@ -456,6 +462,108 @@ export default async function handler(req: any, res: any) {
       return res.status(200).json({ received: true });
     }
 
+    // New endpoints for landing page applications
+    if (pathname === '/api/thinkers' && method === 'POST') {
+      const sql = getSql();
+      const { name, email, idea, progress, diagnosis } = req.body || {};
+
+      if (!name || !email || !idea) {
+        return res.status(400).json({ error: 'Name, email, and idea are required' });
+      }
+
+      const existing = await sql`SELECT id FROM thinker_applications WHERE email = ${email} LIMIT 1` as any[];
+      if (existing.length > 0) return res.status(400).json({ error: 'Email already registered' });
+
+      await sql`INSERT INTO thinker_applications (name, email, idea, progress, diagnosis) VALUES (${name}, ${email}, ${idea}, ${progress || null}, ${diagnosis || null})`;
+
+      return res.status(200).json({ success: true, message: 'Application received' });
+    }
+
+    if (pathname === '/api/doers' && method === 'POST') {
+      const sql = getSql();
+      const { name, email, skill, shipped, vision } = req.body || {};
+
+      if (!name || !email || !skill || !shipped) {
+        return res.status(400).json({ error: 'Name, email, skill, and shipped are required' });
+      }
+
+      const existing = await sql`SELECT id FROM doer_applications WHERE email = ${email} LIMIT 1` as any[];
+      if (existing.length > 0) return res.status(400).json({ error: 'Email already registered' });
+
+      await sql`INSERT INTO doer_applications (name, email, skill, shipped, vision) VALUES (${name}, ${email}, ${skill}, ${shipped}, ${vision || null})`;
+
+      return res.status(200).json({ success: true, message: 'Application received' });
+    }
+
+    if (pathname === '/api/backers' && method === 'POST') {
+      const sql = getSql();
+      const { name, email, amount } = req.body || {};
+
+      if (!name || !email || !amount) {
+        return res.status(400).json({ error: 'Name, email, and amount are required' });
+      }
+
+      const existing = await sql`SELECT id FROM backer_applications WHERE email = ${email} LIMIT 1` as any[];
+      if (existing.length > 0) return res.status(400).json({ error: 'Email already registered' });
+
+      await sql`INSERT INTO backer_applications (name, email, amount) VALUES (${name}, ${email}, ${amount})`;
+
+      return res.status(200).json({ success: true, message: 'Application received' });
+    }
+
+    if (pathname === '/api/investors' && method === 'POST') {
+      const sql = getSql();
+      const { name, firm, email, ticket, thesis } = req.body || {};
+
+      if (!name || !email || !ticket) {
+        return res.status(400).json({ error: 'Name, email, and ticket are required' });
+      }
+
+      const existing = await sql`SELECT id FROM investor_applications WHERE email = ${email} LIMIT 1` as any[];
+      if (existing.length > 0) return res.status(400).json({ error: 'Email already registered' });
+
+      await sql`INSERT INTO investor_applications (name, firm, email, ticket, thesis) VALUES (${name}, ${firm || null}, ${email}, ${ticket}, ${thesis || null})`;
+
+      return res.status(200).json({ success: true, message: 'Application received' });
+    }
+
+    // Admin endpoints for new applications
+    if (pathname === '/api/admin/thinkers') {
+      if (!requireAdmin(req.headers.authorization, req.headers['x-admin-email'] as string | undefined)) return res.status(401).json({ error: 'Unauthorized' });
+      const sql = getSql();
+      if (method === 'GET') {
+        const applications = await sql`SELECT * FROM thinker_applications ORDER BY created_at DESC`;
+        return res.status(200).json({ applications });
+      }
+    }
+
+    if (pathname === '/api/admin/doers') {
+      if (!requireAdmin(req.headers.authorization, req.headers['x-admin-email'] as string | undefined)) return res.status(401).json({ error: 'Unauthorized' });
+      const sql = getSql();
+      if (method === 'GET') {
+        const applications = await sql`SELECT * FROM doer_applications ORDER BY created_at DESC`;
+        return res.status(200).json({ applications });
+      }
+    }
+
+    if (pathname === '/api/admin/backers') {
+      if (!requireAdmin(req.headers.authorization, req.headers['x-admin-email'] as string | undefined)) return res.status(401).json({ error: 'Unauthorized' });
+      const sql = getSql();
+      if (method === 'GET') {
+        const applications = await sql`SELECT * FROM backer_applications ORDER BY created_at DESC`;
+        return res.status(200).json({ applications });
+      }
+    }
+
+    if (pathname === '/api/admin/investors') {
+      if (!requireAdmin(req.headers.authorization, req.headers['x-admin-email'] as string | undefined)) return res.status(401).json({ error: 'Unauthorized' });
+      const sql = getSql();
+      if (method === 'GET') {
+        const applications = await sql`SELECT * FROM investor_applications ORDER BY created_at DESC`;
+        return res.status(200).json({ applications });
+      }
+    }
+
     return res.status(404).json({ error: 'Not found' });
   } catch (error: any) {
     console.error('API error:', error?.message || error);
@@ -463,7 +571,10 @@ export default async function handler(req: any, res: any) {
   }
 }
 
-function requireAdmin(authHeader: string | undefined) {
+function requireAdmin(authHeader: string | undefined, adminEmail?: string | undefined) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
-  return authHeader.split(' ')[1] === process.env.ADMIN_TOKEN;
+  const token = authHeader.split(' ')[1];
+  const validToken = token === process.env.ADMIN_TOKEN;
+  const validEmail = !process.env.ADMIN_EMAIL || (adminEmail && adminEmail === process.env.ADMIN_EMAIL);
+  return validToken && validEmail;
 }

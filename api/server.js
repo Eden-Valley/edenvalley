@@ -10,6 +10,19 @@ const PORT = process.env.PORT || 3001;
 
 // Initialize services
 const DATABASE_URL = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
+
+if (!DATABASE_URL) {
+  console.error('\n❌ ERROR: DATABASE_URL environment variable is not set.\n');
+  console.log('Please set one of these environment variables:');
+  console.log('  - DATABASE_URL (recommended)');
+  console.log('  - VITE_DATABASE_URL (fallback)\n');
+  console.log('Example (PowerShell):');
+  console.log('  $env:DATABASE_URL="postgresql://user:pass@host/dbname"\n');
+  console.log('Example (Command Prompt):');
+  console.log('  set DATABASE_URL=postgresql://user:pass@host/dbname\n');
+  process.exit(1);
+}
+
 const sql = neon(DATABASE_URL);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -246,6 +259,172 @@ app.post('/api/funders', async (req, res) => {
 });
 
 // ============================================
+// LANDING PAGE APPLICATIONS API
+// ============================================
+
+// Initialize tables for landing page applications
+async function initLandingPageTables() {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS thinker_applications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        idea TEXT NOT NULL,
+        progress TEXT,
+        diagnosis TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    await sql`
+      CREATE TABLE IF NOT EXISTS doer_applications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        skill TEXT NOT NULL,
+        shipped TEXT NOT NULL,
+        vision TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    await sql`
+      CREATE TABLE IF NOT EXISTS backer_applications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        amount TEXT NOT NULL,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    await sql`
+      CREATE TABLE IF NOT EXISTS investor_applications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        firm TEXT,
+        email TEXT UNIQUE NOT NULL,
+        ticket TEXT NOT NULL,
+        thesis TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log('✅ Landing page application tables ready');
+  } catch (e) {
+    console.error('❌ Failed to create landing page tables:', e);
+  }
+}
+
+// Create tables on startup
+initLandingPageTables();
+
+// Thinker applications
+app.post('/api/thinkers', async (req, res) => {
+  try {
+    const { name, email, idea, progress, diagnosis } = req.body;
+
+    if (!name || !email || !idea) {
+      return res.status(400).json({ error: 'Name, email, and idea are required' });
+    }
+
+    const existing = await sql`SELECT id FROM thinker_applications WHERE email = ${email} LIMIT 1`;
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    await sql`
+      INSERT INTO thinker_applications (name, email, idea, progress, diagnosis)
+      VALUES (${name}, ${email}, ${idea}, ${progress || null}, ${diagnosis || null})
+    `;
+
+    res.json({ success: true, message: 'Application received' });
+  } catch (error) {
+    console.error('Thinker submission error:', error);
+    res.status(500).json({ error: 'Failed to submit application' });
+  }
+});
+
+// Doer applications
+app.post('/api/doers', async (req, res) => {
+  try {
+    const { name, email, skill, shipped, vision } = req.body;
+
+    if (!name || !email || !skill || !shipped) {
+      return res.status(400).json({ error: 'Name, email, skill, and shipped are required' });
+    }
+
+    const existing = await sql`SELECT id FROM doer_applications WHERE email = ${email} LIMIT 1`;
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    await sql`
+      INSERT INTO doer_applications (name, email, skill, shipped, vision)
+      VALUES (${name}, ${email}, ${skill}, ${shipped}, ${vision || null})
+    `;
+
+    res.json({ success: true, message: 'Application received' });
+  } catch (error) {
+    console.error('Doer submission error:', error);
+    res.status(500).json({ error: 'Failed to submit application' });
+  }
+});
+
+// Backer applications
+app.post('/api/backers', async (req, res) => {
+  try {
+    const { name, email, amount } = req.body;
+
+    if (!name || !email || !amount) {
+      return res.status(400).json({ error: 'Name, email, and amount are required' });
+    }
+
+    const existing = await sql`SELECT id FROM backer_applications WHERE email = ${email} LIMIT 1`;
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    await sql`
+      INSERT INTO backer_applications (name, email, amount)
+      VALUES (${name}, ${email}, ${amount})
+    `;
+
+    res.json({ success: true, message: 'Application received' });
+  } catch (error) {
+    console.error('Backer submission error:', error);
+    res.status(500).json({ error: 'Failed to submit application' });
+  }
+});
+
+// Investor applications
+app.post('/api/investors', async (req, res) => {
+  try {
+    const { name, firm, email, ticket, thesis } = req.body;
+
+    if (!name || !email || !ticket) {
+      return res.status(400).json({ error: 'Name, email, and ticket are required' });
+    }
+
+    const existing = await sql`SELECT id FROM investor_applications WHERE email = ${email} LIMIT 1`;
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    await sql`
+      INSERT INTO investor_applications (name, firm, email, ticket, thesis)
+      VALUES (${name}, ${firm || null}, ${email}, ${ticket}, ${thesis || null})
+    `;
+
+    res.json({ success: true, message: 'Application received' });
+  } catch (error) {
+    console.error('Investor submission error:', error);
+    res.status(500).json({ error: 'Failed to submit application' });
+  }
+});
+
+// ============================================
 // ADMIN API
 // ============================================
 
@@ -304,6 +483,47 @@ app.get('/api/admin/profiles', requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Admin profiles error:', error);
     res.status(500).json({ error: 'Failed to fetch profiles' });
+  }
+});
+
+// Admin endpoints for landing page applications
+app.get('/api/admin/thinkers', requireAdmin, async (req, res) => {
+  try {
+    const applications = await sql`SELECT * FROM thinker_applications ORDER BY created_at DESC`;
+    res.json({ applications });
+  } catch (error) {
+    console.error('Admin thinkers error:', error);
+    res.status(500).json({ error: 'Failed to fetch applications' });
+  }
+});
+
+app.get('/api/admin/doers', requireAdmin, async (req, res) => {
+  try {
+    const applications = await sql`SELECT * FROM doer_applications ORDER BY created_at DESC`;
+    res.json({ applications });
+  } catch (error) {
+    console.error('Admin doers error:', error);
+    res.status(500).json({ error: 'Failed to fetch applications' });
+  }
+});
+
+app.get('/api/admin/backers', requireAdmin, async (req, res) => {
+  try {
+    const applications = await sql`SELECT * FROM backer_applications ORDER BY created_at DESC`;
+    res.json({ applications });
+  } catch (error) {
+    console.error('Admin backers error:', error);
+    res.status(500).json({ error: 'Failed to fetch applications' });
+  }
+});
+
+app.get('/api/admin/investors', requireAdmin, async (req, res) => {
+  try {
+    const applications = await sql`SELECT * FROM investor_applications ORDER BY created_at DESC`;
+    res.json({ applications });
+  } catch (error) {
+    console.error('Admin investors error:', error);
+    res.status(500).json({ error: 'Failed to fetch applications' });
   }
 });
 
