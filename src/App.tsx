@@ -52,6 +52,14 @@ const App = () => {
               />
             </a>
             
+            {/* GoFundMe Campaign - Below Product Hunt Badge */}
+            <div 
+              className="fixed bottom-16 right-6 z-50"
+              dangerouslySetInnerHTML={{ 
+                __html: '<div class="gfm-embed" data-url="https://www.gofundme.com/f/support-the-lost-geniuses-building-an-adhd-sanctuary-for/widget/small?sharesheet=undefined&attribution_id=sl:4bb94cbc-d82b-4eef-b3af-4f493b7ebbdd"></div><script defer src="https://www.gofundme.com/static/js/embed.js"></script>' 
+              }}
+            />
+            
             {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <Routes>
