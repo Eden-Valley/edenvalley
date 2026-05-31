@@ -95,3 +95,22 @@ export async function getInvestorApplications(token: string) {
     headers: { Authorization: `Bearer ${token}` },
   });
 }
+
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  language: string;
+  isValidated: boolean;
+  matchStatus: string;
+}
+
+export async function fetchMe(): Promise<User> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/me', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
