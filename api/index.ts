@@ -564,6 +564,40 @@ export default async function handler(req: any, res: any) {
       }
     }
 
+    if (pathname === '/api/me' && method === 'GET') {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      const userId = authHeader.split(' ')[1];
+      if (!userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      const sql = getSql();
+      const user = await sql`
+        SELECT u.id, u.email, u.first_name, u.last_name, u.role, u.language, u.is_validated
+        FROM users u
+        WHERE u.id = ${userId}
+        LIMIT 1
+      `;
+      if (user.length === 0) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+      const profile = await sql`
+        SELECT status FROM profiles WHERE user_id = ${userId} LIMIT 1
+      `;
+      return res.status(200).json({
+        id: user[0].id,
+        email: user[0].email,
+        firstName: user[0].first_name,
+        lastName: user[0].last_name,
+        role: user[0].role,
+        language: user[0].language || 'en',
+        isValidated: user[0].is_validated,
+        matchStatus: profile.length > 0 ? profile[0].status : 'unmatched',
+      });
+    }
+
     return res.status(404).json({ error: 'Not found' });
   } catch (error: any) {
     console.error('API error:', error?.message || error);
