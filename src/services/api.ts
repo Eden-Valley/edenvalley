@@ -107,10 +107,52 @@ export interface User {
   matchStatus: string;
 }
 
+export interface BlueprintCard {
+  id: string;
+  title: string;
+  content: string;
+  order: number;
+}
+
+export interface Blueprint {
+  id: string;
+  userId: string;
+  cards: BlueprintCard[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function fetchMe(): Promise<User> {
   const userId = localStorage.getItem('eden-user-id');
   if (!userId) throw new Error('Not authenticated');
   return fetchApi('/me', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function fetchBlueprint(): Promise<Blueprint> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/blueprint', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function saveBlueprint(cards: Omit<BlueprintCard, 'id'>[]): Promise<Blueprint> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/blueprint', {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${userId}` },
+    body: JSON.stringify({ cards }),
+  });
+}
+
+export async function deleteBlueprintCard(cardId: string): Promise<void> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/blueprint/cards/${cardId}`, {
+    method: 'DELETE',
     headers: { Authorization: `Bearer ${userId}` },
   });
 }
