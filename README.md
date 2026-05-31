@@ -1,48 +1,40 @@
 # Eden Valley
 
-> **Discover your true cognitive nature. Find your complement. Build the impossible.**
+> **From idea to company. One platform. Zero friction.**
 
-Eden Valley is a cognitive matching platform that identifies and connects founders according to their cognitive DNA - distinguishing **Architects** (thinkers, mapmakers) from **Builders** (doers, executors). Inspired by legendary duos like Wozniak & Jobs, Walt & Roy Disney.
+Eden Valley is a full-stack company building platform that matches **Thinkers** (visionaries, often ADHD/neurodivergent) with **Doers** (executors, builders), then provides AI-powered tools for every step — from ideation to code to content to funding.
+
+**Mission:** Enable the world's greatest creative geniuses to bring their ideas into reality.
+
+---
 
 ## 🚀 Production
 
-**Live URL:** https://edenvalley.at.eu.org
+**Live URL:** https://edenvalley.at.eu.org  
+**Admin Dashboard:** https://edenvalley.at.eu.org/admin
 
-**Admin Dashboard:** https://edenvalley.at.eu.org/admin (token: `eden-valley-admin-secret-token`)
+---
 
-## ✨ Features
+## 🧠 Platform Pillars
 
-### 🧠 Cognitive Diagnostic
-- 8-question test based on cognitive psychology
-- Scoring algorithm differentiating Thinker vs Doer
-- Personalized result with emotional storytelling (Pain → Relief → Revelation)
+### 1. Blueprint Studio (Pischon AI)
+Conversational AI that guides Thinkers to structure their idea into a visual, ADHD-friendly Blueprint — cards, not documents.
 
-### 🔐 Signup System with Admin Validation
-- User registration with Neon PostgreSQL database
-- Admin validation required before account activation
-- Neon Auth integration for post-validation login
+### 2. Euphrates (Matching Engine)
+Algorithm matches Thinker ↔ Doer by cognitive complementarity. After match, Lead Doer can recruit additional team members (10% equity pool).
 
-### 💳 Priority Fast-Track ($49)
-- Stripe Payment Link integration
-- Automatic 72-hour SLA guarantee
-- Refund if SLA missed
+### 3. Pischon AI (Full-Stack Assistant)
+- **Coding Agent** — generates MVP for software projects
+- **Distribution Strategist** — go-to-market + content strategy
+- **Content Creator** — connects to gen models via MCP (video, image, music)
+- **Execution Engine** — micro-tasks, dopamine-friendly deadlines
 
-### 📧 Automated Emails
-- Resend integration for transactional emails
-- Welcome emails on validation
-- Payment confirmation emails
+### 4. Havila (2-Phase Funding)
+- **Phase 1: Crowdfunders** — support from team formation to MVP/GTM
+- **Phase 2: VC/Angels** — invest after validated traction
+- Crowdfunders get 20% of 1% of raised funds
 
-### 🌐 Internationalization (i18n)
-- Support for 7 languages: EN, FR, ES, RU, AR, ZH, JA
-- Automatic browser language detection
-
-### 🎵 Premium Audio Experience
-- Procedural ambient music (Web Audio API)
-- Interactive feedback sounds
-
-### 🔗 Referral System
-- Personalized invitation links
-- Referral tracking
+---
 
 ## 🛠 Tech Stack
 
@@ -52,18 +44,42 @@ Eden Valley is a cognitive matching platform that identifies and connects founde
 | **Styling** | Tailwind CSS + shadcn/ui |
 | **Routing** | React Router DOM 6 |
 | **Database** | PostgreSQL (Neon) |
-| **Auth** | Neon Auth |
+| **Auth** | Neon Auth + Magic Links |
 | **Payments** | Stripe |
 | **Email** | Resend |
+| **AI** | LLM (GPT-4/Claude) + RAG |
+| **Content** | MCP Gateway (Runway, Midjourney, etc.) |
 | **Deployment** | Vercel |
 
-## 📋 Prerequisites
+---
 
-- **Node.js** >= 18.0.0
-- **npm** >= 9.0.0
-- **Git**
+## ✨ Current Features (Validation Phase)
 
-## 🚀 Installation
+- ✅ Cognitive diagnostic test (Thinker vs Doer)
+- ✅ Signup with admin validation flow
+- ✅ Stripe $49 priority fast-track
+- ✅ Automated emails (accept, reject, refund)
+- ✅ Admin dashboard for profile review
+- ✅ 7-language i18n (EN, FR, ES, RU, AR, ZH, JA)
+- ✅ Procedural ambient audio
+- ✅ GoFundMe crowdfunding widget
+
+---
+
+## 🗺️ Roadmap
+
+| Sprint | Focus |
+|--------|-------|
+| 1-2 | Security + Member Dashboard + Blueprint CRUD |
+| 3-4 | Blueprint Studio UI + Pischon conversational guide |
+| 5-6 | Euphrates matching + Team assembly |
+| 7-8 | Coding Agent + MCP Gateway |
+| 9-10 | Havila Crowd Phase 1 + VC Phase 2 |
+| 11-12 | Pischon Distribution + Content + Memory |
+
+---
+
+## 📦 Installation
 
 ```bash
 git clone https://github.com/Eden-Valley/edenvalley.git
@@ -72,7 +88,7 @@ npm install
 npm run dev
 ```
 
-## 🔧 Environment Variables
+### Environment Variables
 
 Create `.env.local`:
 
@@ -94,37 +110,60 @@ ADMIN_TOKEN=your-admin-token
 # Cron
 CRON_SECRET=your-cron-secret
 
-# Auth
+# Auth (Neon)
 VITE_NEON_AUTH_URL=https://...
 ```
 
-## 🌐 API Routes
+---
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/health` | GET | Health check |
-| `/api/stats` | GET | User count stats |
-| `/api/founders` | POST | Submit founder profile |
-| `/api/funders` | POST | Submit funder profile |
-| `/api/admin/profiles` | GET | List all profiles (admin) |
-| `/api/validate-user` | POST | Validate user profile (admin) |
-| `/api/cron/process-refunds` | POST | Process refunds (cron) |
-| `/api/stripe/webhook` | POST | Stripe webhook handler |
+## 📁 Project Structure
+
+```
+api/                  # Vercel Serverless API
+├── index.ts          # Production API (580 lines, needs refactor)
+├── server.js         # Local dev Express server
+└── package.json
+src/
+├── pages/            # React pages (Home, Auth, Admin, Test, etc.)
+├── components/       # UI components (shadcn-based)
+├── hooks/            # Custom hooks (audio, scroll, i18n)
+├── i18n/             # 7-language internationalization
+├── lib/              # Utilities
+├── services/         # API services
+└── audio/            # Procedural audio engine
+```
+
+---
 
 ## 🔒 Security
 
-- ✅ Environment variables excluded from git
-- ✅ Input validation
-- ✅ Admin token authentication
+- ✅ `.gitignore` excludes secrets
+- ✅ SQL injection protection (parameterized queries)
 - ✅ Stripe webhook signature verification
+- ⚠️ Known issues: `Math.random()` in token generation, no rate limiting, no input validation library — see FUNDRAISING_PLAN.md sprint 1
+
+---
+
+## 📖 Documentation
+
+| Document | Description |
+|----------|-------------|
+| `edenvalley.md` | Master Plan v2 — full platform architecture |
+| `EXECUTIVE_SUMMARY.md` | For investors and backers |
+| `FUNDRAISING_PLAN.md` | $150K raise details + 2-phase funding model |
+| `T&D_paradigm.md` | Thinker & Doer cognitive research |
+
+---
 
 ## 👥 Team
 
 - **Founder:** [Kelly Kheir](https://github.com/kellykheir)
 
+---
+
 ## 📞 Contact
 
-contact@edenvalley.com
+**Live:** https://edenvalley.at.eu.org
 
 ---
 

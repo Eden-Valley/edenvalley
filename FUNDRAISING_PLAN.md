@@ -1,9 +1,9 @@
-# Eden Valley - Fundraising Plan
-## AI-Powered Incubator for Thinker-Doer Partnerships
+# Eden Valley — Fundraising Plan v2
+## Full-Stack Company Building Platform for Neurodivergent Founders
 
-**Target Raise:** $150,000 (Seed/Crowdfunding)  
-**Use of Funds:** Full platform build + 1 year marketing  
-**Locked:** April 2026
+**Target Raise:** $150,000 (Crowdfunding)  
+**Use of Funds:** Full platform build + 1 year operations + AI model costs  
+**Status:** Locked — May 2026
 
 ---
 
@@ -11,69 +11,127 @@
 
 ### The Problem We're Solving
 
-**For Thinkers:**  
+**For Thinkers (ADHD/INTJ):**
 - Have brilliant ideas, can't execute
 - 67% of strategies fail due to execution gaps
 - Identity shame: "I'm just a dreamer"
 
-**For Doers:**  
+**For Doers:**
 - Execute powerfully but on wrong foundations
 - Treated as **labor**, not partners
-- Blamed for decisions they never made
 - No agency in what they build
 
-**The Shocking Stat:**  
+**The Shocking Stat:**
 > **65% of startups fail due to co-founder conflict** — not product, not market, not funding.
 
-**Current platforms** (YC, CoFoundersLab) only do **matching**.  
-**Eden Valley** does **matching + relationship infrastructure + funding**.
+**Current platforms** solve only one piece:
+- YC → Funding only
+- CoFoundersLab → Matching only
+- Upwork → Freelancers only
+- No-code → Building only
+
+**Eden Valley** provides the **complete OS**: Match + Build + Content + Distribute + Fund.
+
+### Why NOW?
+
+1. **AI is finally cheap enough** — LLMs, gen-video, gen-image at scale
+2. **MCP ecosystem** is emerging — standardized model connections
+3. **Remote work** normalized distributed founding teams
+4. **Creator economy** proved passion-based work can scale
+5. **65% failure rate** is unacceptable — and fixable with the right infrastructure
 
 ### Market Size
 
 - **TAM:** Global startup ecosystem ($500B+ in annual funding)
-- **SAM:** Pre-seed/seed founder matching market
-- **SOM:** First 100 teams, then scale
+- **SAM:** Pre-seed/seed founder matching + building tools market
+- **SOM:** First 100 teams, then scale via network effects
 
 ---
 
 ## 2. OUR SOLUTION
 
 ### One-Liner
-> **"An AI-powered incubator where Thinkers and Doers with shared Passion build together, crowdfunders support early, and investors find deals."**
 
-### The Moat (Defensible)
-> **((Thinker + Doer + Passion) + AI + Platform Structure)**
+> **"An AI-powered incubator where Thinkers and Doers build together — from idea to code to content to funding."**
 
-| Component | What It Is |
-|-----------|-----------|
-| **Thinker/Doer** | Defined roles (ideation ↔ execution) |
-| **Passion** | Shared purpose matching (the NEW dimension) |
-| **AI (Pischon)** | Specialized agents at every layer |
-| **Platform** | Euphrates + Havila + all tools |
+### Platform Overview
 
-### Platform Architecture
+```
+IDÉE → BLUEPRINT → MATCH → ÉQUIPE → CODE/SPÉCS → CONTENU → DISTRIBUTION → FUNDING
+  ↑        ↑          ↑        ↑         ↑            ↑           ↑            ↑
+Pischon  Pischon   Euphrates Pischon  Coding      MCP Gen    Pischon      Havila
+guide    studio              + Pischon Agent      + Pischon  Strategist   Crowd→VC
+```
 
-**Euphrates Wall** (Team Building)
-- Thinkers post blueprints
-- Doers apply showing "how I'll contribute"
-- AI helps with: structure, questions, filtering, contracts
-- Team forms with clear roles & equity
+### The Four Pillars
 
-**Havila Wall** (Funding Showcase)
-- Pre-incorporation: Crowdfunders see teams, support with pre-orders
-- Post-incorporation: VCs/Angels see structured, validated teams
+**1. Blueprint Studio (Pischon)**
+- Conversational AI that guides Visionnaires to structure their idea
+- Visual card-based interface (ADHD-optimized)
+- Standardized format for matching + funding
 
-**Pischon AI** (Our Secret Weapon)
-- Blueprint structuring (free always)
-- Team matching interview questions
-- Contract & equity agreement generation
-- Execution help (KPIs, tasks)
-- Pitch preparation
-- Funder filtering
+**2. Euphrates (Matching Engine)**
+- Algorithm matches Thinker ↔ Doer by cognitive complementarity
+- After match: Lead Doer can recruit team (10% equity pool)
+- Smart contracts for co-founder agreement
+
+**3. Pischon AI (Full-Stack Assistant)**
+- **Coding Agent** — generates MVP for software projects via AI
+- **Distribution Strategist** — go-to-market, content strategy
+- **Content Creator** — connects to gen models via MCP (video, image, music)
+- **Memory Layer** — tracks decisions, context, patterns
+
+**4. Havila (2-Phase Funding)**
+- **Phase 1: Crowdfunders** — support from team formation to MVP/GTM
+- **Phase 2: VC/Angels** — invest after validated traction
+- Crowdfunders get 20% of 1% of raised funds
 
 ---
 
-## 3. BUSINESS MODEL (Locked)
+## 3. THE TWO-PHASE FUNDING MODEL (Key Innovation)
+
+### Why Two Phases?
+
+**The problem with traditional startup funding:**
+- VCs won't invest in just an idea
+- Crowdfunders want to support early but have no visibility
+- Teams need cash BEFORE they have traction
+
+**Our solution:**
+
+```
+PHASE 1 : CROWDFUNDING
+───────────────────────────
+When: From team formation (Thinker + Doer matched)
+Who: Individual backers ($10-$1000)
+What they see: Team profile + Blueprint + Milestones
+What they get: Rewards + early access + 20% of 1% of raises
+Goal: $500-$50,000 per team
+Duration: Until MVP / Go-to-Market ready
+
+→ Transition trigger: MVP shipped, first users, traction
+
+PHASE 2 : VC / ANGELS
+───────────────────────────
+When: After MVP/GTM ready
+Who: Angel investors, VCs
+What they see: Validated team + product + traction + crowdfunder proof
+Why they love it: Pre-built team, reduced risk, community validated
+Goal: $50K-$2M per team
+```
+
+### Why This Works
+
+| | Phase 1 (Crowd) | Phase 2 (VC) |
+|---|---|---|
+| **Risk for funder** | High, but small amounts | Lower, validated team |
+| **Reward** | Emotional + 20% of 1% | Financial ROI |
+| **Team motivation** | Validation + early cash | Scale capital |
+| **Eden Valley revenue** | Platform fees | 1% of raise |
+
+---
+
+## 4. BUSINESS MODEL (Locked)
 
 ### Revenue Streams
 
@@ -81,14 +139,14 @@
 |--------|------|--------|
 | **Equity** | At venture incorporation | 5% |
 | **Funding fee** | When venture gets funded (any source) | 1% of amount |
-| **Crowdfunders pool** | Only if venture succeeds | 20% of our 5% |
-| **Premium AI** | Future (Year 2+) | TBD |
+| **Crowdfunders pool** | Only if venture succeeds | 20% of our 1% |
+| **AI/MCP services** | Usage-based | Per-generation fees |
 
 ### Why This Works
 
 - **Free for founders** → No barrier to entry
 - **Success-aligned** → We win when they win
-- **Better than YC** → 5% vs 7%, plus crowdfunding support
+- **Better than YC** → 5% vs 7%, plus building tools + funding + content
 - **Recurring** → 1% of every funding round
 
 ### Unit Economics Example
@@ -96,11 +154,112 @@
 If we help 100 teams per year:
 - 20 incorporate → 20 × 5% equity
 - 10 get funded (avg $500K) → 10 × 1% × $500K = $50K
-- If 5 succeed big → 20% of 5% goes to crowdfunders (aligned incentives)
+- If 5 succeed big → 20% of 1% goes to crowdfunders
+- AI model usage: ~$200/team/month = $240K/year at scale
 
 ---
 
-## 4. COMPETITIVE ADVANTAGE
+## 5. CROWDFUNDING STRATEGY
+
+### Why Crowdfunding?
+
+1. **Mission resonates** — People care about helping founders
+2. **Community first** — Build evangelists from day one
+3. **No dilution** — Keep equity for future VC rounds
+4. **Validation** — Proves demand before building full platform
+
+### Backer Tiers
+
+| Tier | Amount | Reward |
+|------|--------|--------|
+| **Supporter** | $10 | Newsletter + project updates |
+| **Backer** | $50 | Above + early access + Wall of Supporters |
+| **Builder** | $100 | Above + limited T-shirt + Discord access |
+| **Visionary** | $500 | Above + 1:1 call with founder + naming in a Blueprint |
+| **Founder's Circle** | $1,000 | Above + 20% of 1% of raised funds from supported startups |
+
+### The 20% of 1% Mechanism
+
+```
+Startup raises $1M → Eden Valley takes 1% ($10K)
+                      20% of $10K = $2K goes to crowdfunders pool
+                      Distributed proportionally to contribution
+```
+
+### Platform Choice
+
+**Recommendation:** Start with Indiegogo/Kickstarter for validation, then build native crowdfunding into Havila.
+
+---
+
+## 6. USE OF FUNDS ($150K)
+
+### Why We Need $150K
+
+AI models are expensive. This isn't just servers — it's **reasoning tokens, gen-video compute, image generation**:
+
+| Category | Amount | Purpose |
+|----------|--------|---------|
+| **Development** | $60K | Euphrates + Havila + Pischon + MCP Gateway |
+| **AI API costs** | $13K | 6 months of LLM + gen model APIs |
+| **Marketing** | $40K | Content, community, paid acquisition |
+| **Operations** | $20K | Legal (contracts, equity), tools, infra |
+| **Grants/Partnerships** | $10K | Grant applications, partnership dev |
+| **Buffer** | $7K | Unexpected costs |
+| **Total** | **$150K** | |
+
+### Monthly Burn Projection
+
+| Item | Monthly Cost |
+|------|-------------|
+| LLM API (GPT-4/Claude) | $2K-5K |
+| Gen models (Runway, Midjourney) | $1K-3K |
+| Vector DB (Pinecone) | $500-1K |
+| Infra (Vercel + Neon) | $200-500 |
+| Developer(s) | $5K-10K |
+| **Total** | **~$10K-20K/mo** |
+
+→ $150K gives us **6-12 months of runway**
+
+---
+
+## 7. WHAT WE BUILD WITH THIS FUNDING
+
+### Sprint 1-2: Stabilization
+- [ ] Security fixes (crypto tokens, rate limiting, validation)
+- [ ] Member dashboard after auth
+- [ ] Blueprint CRUD (API + DB)
+
+### Sprint 3-4: Blueprint + Pischon Base
+- [ ] Blueprint Studio UI (visual, ADHD-friendly)
+- [ ] Pischon conversational guide MVP
+- [ ] Standard Blueprint format
+
+### Sprint 5-6: Euphrates + Team Assembly
+- [ ] Matching algorithm
+- [ ] Profile discovery UI
+- [ ] Request/accept system
+- [ ] Team assembly (10% pool offers)
+
+### Sprint 7-8: Coding Agent + MCP
+- [ ] Coding Agent MVP (project scaffold)
+- [ ] GitHub integration
+- [ ] MCP Gateway (gen model connections)
+
+### Sprint 9-10: Havila Funding
+- [ ] Havila Crowd Phase 1 (rewards + payments)
+- [ ] Havila Pro Phase 2 (VC filter)
+- [ ] Crowdfunder dashboard
+
+### Sprint 11-12: Pischon Deep
+- [ ] Distribution Strategist module
+- [ ] Content Generator (via MCP)
+- [ ] Grants Finder API
+- [ ] Memory Layer
+
+---
+
+## 8. COMPETITIVE ADVANTAGE
 
 ### vs. Y Combinator
 
@@ -110,182 +269,132 @@ If we help 100 teams per year:
 | Batch/cohort | Continuous (always open) |
 | Demo day | Havila wall (always visible) |
 | Human mentors | Pischon AI (24/7, scalable) |
-| No crowdfunding | Built-in crowdfunding support |
-| No passion filter | Passion-based matching |
+| No crowdfunding | Built-in 2-phase crowdfunding |
+| No building tools | Coding Agent + MCP ecosystem |
 
 ### vs. CoFoundersLab
 
 | CoFoundersLab | Eden Valley |
 |---------------|-------------|
-| Matching only | Matching + Infrastructure + Funding |
-| Class action lawsuit history | Clean slate, better framework |
-| No post-match support | Full relationship scaffolding |
-| No AI | Pischon at every layer |
+| Matching only | Matching + Building + Content + Funding |
+| No post-match support | Full Pischon scaffolding |
+| No AI | AI at every layer |
+| No funding pipeline | Havila Crowd → VC pipeline |
 
 ### Key Differentiator
 
-> **"We don't just match you. We give you the contract that keeps you together."**
+> **"We don't just match you. We give you the OS to build your company — from idea to code to content to funding."**
 
 ---
 
-## 5. TRACTION & VALIDATION
+## 9. TRACTION & VALIDATION
+
+### What Exists Today (Production)
+
+- **Landing page** with ADHD incubator positioning
+- **Cognitive test** (8 questions → Thinker/Doer)
+- **Signup flow** with Stripe $49 priority review
+- **Admin panel** for manual profile review
+- **Auth** via Neon Auth with magic link emails
+- **150+ email captures** (waiting list)
 
 ### Research Foundation
 
-- **100+ sources** compiled in `T&D_paradigm.md`
+- 100+ sources compiled in T&D_paradigm.md
 - Nature Scientific Reports (2023): 21,187 startups analyzed
 - Harvard: 65% fail due to co-founder conflict
 - CB Insights: 23% fail due to wrong team
-
-### What We've Built
-
-- [x] Extensive research documentation
-- [x] Master plan locked
-- [x] Vision & architecture defined
-- [x] Landing page concept
-- [ ] **Next: Validate interest (this raise)**
 
 ### Target Milestones
 
 | Phase | Target | Timeline |
 |-------|--------|----------|
 | This raise | $150K | Now |
-| Landing page live | 500 emails | Month 1-2 |
-| MVP launch | 10 teams | Month 6-8 |
+| Platform MVP | 10 teams | Month 6-8 |
 | Scale | 100 teams | Year 2 |
+| Revenue positive | 50+ active teams | Year 2-3 |
 
 ---
 
-## 6. USE OF FUNDS ($150K)
+## 10. PARTNERSHIPS & GRANTS
 
-| Category | Amount | Purpose |
-|----------|--------|---------|
-| **Development** | $80K | Build Euphrates + Havila + Pischon |
-| **Marketing** | $40K | 1 year of growth, content, community |
-| **Operations** | $20K | Legal, tools, infrastructure |
-| **Buffer** | $10K | Unexpected costs |
-| **Total** | **$150K** | |
+### Why Partnerships Matter
 
-### What We Build With This
+AI model costs are significant. Partnerships reduce costs and add credibility.
 
-1. **Euphrates Wall** - Full team-building platform
-2. **Havila Wall** - Funding showcase
-3. **Pischon AI** - Integrated AI assistant
-4. **Blueprint protection** - IP agreements, permissions
-5. **GitHub integration** - Doers can code directly
-6. **Payment infrastructure** - For crowdfunders
+### Targets
 
----
+| Partner Type | Benefit |
+|-------------|---------|
+| **OpenAI / Anthropic** | Startup credits for LLM APIs |
+| **Runway / Pika** | MCP integration + discounted gen-video |
+| **Midjourney** | MCP integration + gen-image |
+| **Microsoft for Startups** | Azure credits + infra |
+| **Government innovation grants** | R&D funding for neurodiversity + AI |
+| **RDSP / innovation agencies** | Non-dilutive funding |
 
-## 7. CROWDFUNDING STRATEGY
+### Approach
 
-### Why Crowdfunding?
-
-1. **Mission resonates** - People care about helping founders
-2. **Community first** - Build evangelists from day one
-3. **No dilution** - Keep equity for future VC rounds
-4. **Validation** - Proves demand before building
-
-### Backer Tiers (Recommended)
-
-| Tier | Amount | Reward |
-|------|--------|--------|
-| **Supporter** | $25 | Early access + newsletter |
-| **Advocate** | $100 | Above + founder badge on platform |
-| **Champion** | $500 | Above + priority support + 1 year premium |
-| **Pioneer** | $2,500 | Above + advisory call + lifetime premium |
-| **Visionary** | $10,000 | Above + featured on wall of founders + equity discussion |
-
-### Platform Choice
-
-**Option A: Kickstarter/Indiegogo**
-- Pros: Established traffic, trust
-- Cons: Platform fees (5%), not equity-focused
-
-**Option B: Build our own**
-- Pros: No fees, own the data, equity possible
-- Cons: Need to drive all traffic
-
-**Recommendation:** Start with Kickstarter for validation, then build own for ventures.
-
-### The Pitch (For Crowdfunders)
-
-> "You're not just backing a platform. You're unlocking the next generation of startups. Every dollar helps a Thinker find their Doer, and a Doer find respect. You're building the infrastructure that prevents 65% of startup failures."
+1. Apply to existing startup programs (OpenAI, Microsoft for Startups)
+2. Leverage MCP partnerships (standard protocol = easier integration)
+3. Apply for neurodiversity + tech grants (US, EU, Canada)
 
 ---
 
-## 8. ANGEL/VC PATH (Alternative/Complement)
-
-### If We Go Angels Instead/Also
-
-**Sweet Spot:** Angels who:
-- Understand the founder matching problem
-- Have portfolio companies that struggled with co-founder conflict
-- See AI as infrastructure play
-
-**Pitch Points:**
-1. Infrastructure play (not just a feature)
-2. Network effects (more teams = better matching)
-3. Data moat (AI improves with every team)
-4. YC-sized market with better economics
-
-**What We'd Offer Angels:**
-- SAFE or equity
-- Advisory role
-- Early access to Havila deals
-
----
-
-## 9. RISK MITIGATION
+## 11. RISK MITIGATION
 
 | Risk | Mitigation |
 |------|-----------|
-| Can't build platform | Phased approach, MVP first |
-| No teams sign up | Free model, validate before building |
-| AI costs too high | Start with basic prompts, scale gradually |
-| Competition | First-mover in "relationship infrastructure" |
+| AI costs too high | Start with basic prompts, partner credits, scale gradually |
+| No teams sign up | Free model, validate before building, waitlist exists |
+| Competition | First-mover in "full-stack company building" category |
+| LLM hallucinations | RAG on Blueprint + strict prompt engineering |
+| ADHD users don't complete Blueprint | Hyper-optimized UX, auto-save, Pischon guides |
 | Regulatory (equity) | Legal review, start with rewards crowdfunding |
+| Not enough Doers | Targeted campaigns, referral program, equity incentive |
 
 ---
 
-## 10. THE ASK
+## 12. THE ASK
 
 ### For Crowdfunding Backers
 
 **Join us in building the infrastructure that prevents 65% of startup failures.**
 
 Your contribution helps us:
-- Build the Euphrates wall (team matching)
-- Launch the Havila wall (funding showcase)
-- Train Pischon AI (founder assistant)
+- Build the Blueprint Studio (idea structuring)
+- Launch Euphrates (matching engine)
+- Train Pischon AI (coding, content, distribution)
+- Connect MCP ecosystem (video, image models)
 - Support the first 100 Thinker-Doer teams
 
 **Every backer gets:**
 - Early access to the platform
 - Founder badge (visible to all teams)
 - Priority support
+- 20% of 1% of future raises from teams you support
 - The knowledge that you helped unlock human potential
 
 ### For Angel Investors
 
 **$150K builds infrastructure for a $500B+ market.**
 
-We're not just another co-founder matching site. We're the **relationship scaffolding** that keeps teams together. With AI (Pischon) at every layer, we're scalable from day one.
+We're not just another matching site. We're the **full OS for company building** — from idea to code to content to funding. With AI (Pischon) at every layer, MCP ecosystem for content, and 2-phase funding pipeline.
 
-**The economics:** 5% equity + 1% of funding from every venture we help.
+**The economics:** 5% equity + 1% of funding from every venture + AI service revenue.
 
 ---
 
-## 11. NEXT STEPS
+## 13. NEXT STEPS
 
 1. **Finalize this plan** ← You are here
-2. **Launch crowdfunding campaign** (or angel conversations)
-3. **Build landing page** → Collect 500 emails
+2. **Launch crowdfunding campaign** (Indiegogo/Kickstarter)
+3. **Build Sprint 1-2** (security + dashboard + Blueprint CRUD)
 4. **Validate with 10 interviews** (5 Thinkers, 5 Doers)
-5. **Build MVP** (Euphrates first)
+5. **Build full platform** (Sprints 3-12)
 6. **Launch → Iterate → Scale**
 
 ---
 
-*Document created: April 2026*  
-*Based on: T&D_paradigm.md, MASTER_PLAN.md, vision.md*
+*Document updated: May 2026*
+*Based on: edenvalley.md (Master Plan v2), T&D_paradigm.md, vision.md*

@@ -1,4 +1,4 @@
-# Eden Valley - Executive Summary
+# Eden Valley — Executive Summary
 ## For Investors & Crowdfunding Backers
 
 ---
@@ -9,37 +9,48 @@
 
 **Thinkers** have ideas but can't execute. **Doers** can execute but are treated as labor, not partners.
 
-Current platforms only match them. **None help them survive the relationship.**
+Current platforms only solve **one piece** of the puzzle:
+- Matching only (CoFoundersLab)
+- Funding only (YC)
+- Freelancers only (Upwork)
+
+**None provide the full chain from idea to company.**
 
 ---
 
 ## The Solution
 
-**Eden Valley** is an AI-powered incubator that:
-1. **Matches** Thinkers + Doers on **passion** (not just skills)
-2. **Structures** the relationship (contracts, equity, roles)
-3. **Supports** with AI (Pischon) at every step
-4. **Funds** through crowdfunders + investors
+**Eden Valley** is a full-stack company building platform that:
+
+1. **Matches** Thinkers + Doers on cognitive complementarity (Euphrates)
+2. **Structures** the idea into a visual Blueprint (Pischon AI)
+3. **Builds** the product — code via AI agent or specs via Blueprint
+4. **Creates** content & distribution strategy via AI + MCP models
+5. **Funds** in 2 phases: Crowdfunders first, then VCs/Angels (Havila)
 
 ### The Moat
-> **((Thinker + Doer + Passion) + AI + Platform Structure)**
+
+> **((Thinker + Doer + AI + MCP + 2-Phase Funding) × Platform Structure)**
 
 ---
 
 ## The Platform
 
-### Euphrates Wall (Team Building)
-Thinkers post blueprints → Doers apply → AI helps select → Team forms with contracts
+### Euphrates (Matching)
+Thinkers post Blueprints → Doers apply → AI matches → Core team forms with equity contracts
 
-### Havila Wall (Funding Showcase)
-Teams showcase → Crowdfunders support early → VCs/Angels invest later
+### Team Assembly
+Lead Doer recruits additional team members (10% equity pool) — developers, designers, marketers
 
 ### Pischon AI (24/7 Assistant)
-- Blueprint structuring
-- Interview questions
-- Contract generation
-- Execution support
-- Pitch prep
+- **Blueprint Studio** — conversational idea structuring (ADHD-friendly)
+- **Coding Agent** — MVP code generation for software projects
+- **Distribution Strategist** — go-to-market, content strategy
+- **Content Creator** — video/image generation via MCP (Runway, Midjourney, etc.)
+
+### Havila (2-Phase Funding)
+- **Phase 1: Crowdfunders** — support from team formation until MVP/GTM ready
+- **Phase 2: VC/Angels** — invest after validated team + product + traction
 
 ---
 
@@ -49,7 +60,8 @@ Teams showcase → Crowdfunders support early → VCs/Angels invest later
 |---------------|--------|------|
 | Equity in ventures | 5% | At incorporation |
 | Funding fee | 1% of round | When funded |
-| Crowdfunders pool | 20% of our 5% | If venture succeeds |
+| Crowdfunders pool | 20% of our 1% | If venture succeeds |
+| AI/MCP services | Usage-based | Ongoing |
 
 **Why it works:** Free for founders. We win when they win. Better economics than YC (5% vs 7%).
 
@@ -58,35 +70,29 @@ Teams showcase → Crowdfunders support early → VCs/Angels invest later
 ## The Ask: $150,000
 
 ### Use of Funds
-- **$80K** - Build platform (Euphrates + Havila + Pischon)
-- **$40K** - 1 year marketing
-- **$20K** - Operations, legal
-- **$10K** - Buffer
+- **$80K** — Build platform (Euphrates + Havila + Pischon + MCP)
+- **$40K** — 1 year marketing & community
+- **$20K** — Operations, legal, AI API costs
+- **$10K** — Buffer
 
-### Backer Rewards (Crowdfunding)
-- $25 - Early access + newsletter
-- $100 - Founder badge
-- $500 - Priority support + 1 year premium
-- $2,500 - Advisory call + lifetime premium
-- $10,000 - Featured + equity discussion
+### Why We Need Funding
+
+AI models (LLMs, gen-video, gen-image) cost real money:
+- LLM APIs: $2K-5K/month
+- Gen models: $1K-3K/month
+- Infra: $500-1K/month
+
+Funding enables us to build before revenue.
 
 ---
 
 ## Why Now?
 
 1. **AI makes this scalable** (Pischon can help thousands)
-2. **Remote work** made co-founder matching essential
-3. **Creator economy** normalized passion-based work
-4. **65% failure rate** is unacceptable and fixable
-
----
-
-## Traction
-
-- **Research:** 100+ sources compiled (Nature, Harvard, CB Insights)
-- **Architecture:** Fully designed (see MASTER_PLAN.md)
-- **Vision:** Locked and clear
-- **Next:** This raise validates demand
+2. **MCP ecosystem** enables content creation at zero marginal cost
+3. **Remote work** normalized distributed founding teams
+4. **Creator economy** proved passion-based work can scale
+5. **65% failure rate** is unacceptable and fixable
 
 ---
 
@@ -95,16 +101,26 @@ Teams showcase → Crowdfunders support early → VCs/Angels invest later
 | Platform | What They Do | What We Do |
 |----------|--------------|------------|
 | Y Combinator | 7% equity, batch program | 5% equity, continuous, +AI, +crowdfunding |
-| CoFoundersLab | Matching only | Matching + Infrastructure + Funding |
+| CoFoundersLab | Matching only | Matching + Building + Content + Funding |
 | AngelList | Jobs + investing | Full relationship scaffolding |
+| No-code tools | Building only | Building + Team + Strategy + Funding |
 
-**Key difference:** We don't just find matches. We give teams the **contract that keeps them together.**
+**Key difference:** We provide the **complete OS** from idea to company — match, build, content, distribute, fund.
+
+---
+
+## Traction
+
+- **Research:** 100+ sources compiled (Nature, Harvard, CB Insights)
+- **Architecture:** Fully designed (see MASTER_PLAN.md)
+- **Production:** Landing page + cognitive test + validation flow live
+- **Next:** This raise builds the full platform
 
 ---
 
 ## The Vision
 
-> **"We close the Thinker-Doer gap — from ideation to execution."**
+> **"From idea to company. One platform. Zero friction."**
 
 By 2028, Eden Valley will have:
 - 1,000+ teams formed
@@ -118,16 +134,14 @@ By 2028, Eden Valley will have:
 
 **Back Eden Valley** to:
 - Prevent 65% of startup failures
-- Unlock human potential
+- Unlock neurodivergent potential
 - Build the future of entrepreneurship
 
-**$150,000 builds the infrastructure.** The returns are measured in successful startups, happy founders, and a new way to build companies.
+**$150,000 builds the infrastructure.** Returns measured in successful startups, happy founders, and a new way to build companies.
 
 ---
 
-*Ready to close the gap.*
+**Contact:** edenvallie.com
+**Docs:** edenvalley.md (Master Plan v2), T&D_paradigm.md, vision.md
 
----
-
-**Contact:** edenvallie.com  
-**Docs:** See T&D_paradigm.md, MASTER_PLAN.md, vision.md
+*Updated: May 2026*
