@@ -8,12 +8,6 @@ vi.mock('../services/api', () => ({
   saveBlueprint: vi.fn(),
 }));
 
-vi.mock('../contexts/AuthContext', () => ({
-  useAuth: () => ({
-    user: { id: '1', firstName: 'Test' },
-  }),
-}));
-
 describe('BlueprintEditor', () => {
   it('shows empty state with prompt to add first card', async () => {
     render(

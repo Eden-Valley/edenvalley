@@ -3,7 +3,7 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BlueprintCard from '@/components/BlueprintCard';
 import BlueprintCardForm from '@/components/BlueprintCardForm';
-import { fetchBlueprint, saveBlueprint, type BlueprintCard as BlueprintCardType } from '@/services/api';
+import { fetchBlueprint, type BlueprintCard as BlueprintCardType } from '@/services/api';
 
 function BlueprintEditor() {
   const [cards, setCards] = useState<BlueprintCardType[]>([]);
@@ -14,11 +14,11 @@ function BlueprintEditor() {
   useEffect(() => {
     fetchBlueprint()
       .then((data) => setCards(data.cards ?? []))
-      .catch(() => setCards([]))
+      .catch(() => { setCards([]); })
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSave = async (data: { title: string; content: string }) => {
+  const handleSave = (data: { title: string; content: string }) => {
     if (editingId) {
       const updated = cards.map((c) =>
         c.id === editingId ? { ...c, title: data.title, content: data.content } : c
@@ -51,7 +51,7 @@ function BlueprintEditor() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-label="Loading blueprint" />
       </div>
     );
   }
