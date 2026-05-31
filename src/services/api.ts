@@ -107,7 +107,9 @@ export interface User {
   matchStatus: string;
 }
 
-export async function fetchMe(userId: string): Promise<User> {
+export async function fetchMe(): Promise<User> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
   return fetchApi('/me', {
     headers: { Authorization: `Bearer ${userId}` },
   });
