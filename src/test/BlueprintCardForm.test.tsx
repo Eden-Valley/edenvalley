@@ -44,6 +44,31 @@ describe('BlueprintCardForm', () => {
     expect(titleInput.value).toBe('Existing Title');
   });
 
+  it('calls onOpenChange(false) when Cancel is clicked', () => {
+    const onOpenChange = vi.fn();
+    render(
+      <BlueprintCardForm
+        open={true}
+        onOpenChange={onOpenChange}
+        onSave={vi.fn()}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('submit button is disabled when title is empty', () => {
+    render(
+      <BlueprintCardForm
+        open={true}
+        onOpenChange={vi.fn()}
+        onSave={vi.fn()}
+      />
+    );
+    const submitBtn = screen.getByRole('button', { name: /add card/i });
+    expect(submitBtn).toBeDisabled();
+  });
+
   it('shows "Add Card" title when no initialTitle, "Edit Card" when editing', () => {
     const { rerender } = render(
       <BlueprintCardForm open={true} onOpenChange={vi.fn()} onSave={vi.fn()} />
@@ -58,6 +83,6 @@ describe('BlueprintCardForm', () => {
         initialTitle="Something"
       />
     );
-    expect(screen.getByText('Edit Card')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /edit card/i })).toBeInTheDocument();
   });
 });

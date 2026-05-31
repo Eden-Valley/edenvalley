@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -43,6 +44,9 @@ function BlueprintCardForm({ open, onOpenChange, onSave, initialTitle, initialCo
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-display text-lg">{isEditing ? 'Edit Card' : 'Add Card'}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {isEditing ? 'Edit the title and content of your blueprint card.' : 'Add a new card to your blueprint.'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -68,7 +72,7 @@ function BlueprintCardForm({ open, onOpenChange, onSave, initialTitle, initialCo
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={!title.trim()}>{isEditing ? 'Save Changes' : 'Add Card'}</Button>
+            <Button type="submit" disabled={!title.trim()}>{isEditing ? 'Edit Card' : 'Add Card'}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
