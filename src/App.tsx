@@ -27,6 +27,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import DashboardHome from "@/pages/dashboard/DashboardHome";
+import BlueprintEditor from "@/pages/dashboard/BlueprintEditor";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,16 @@ const App = () => {
                       <ProtectedRoute>
                         <DashboardLayout>
                           <DashboardHome />
+                        </DashboardLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/blueprint"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardLayout>
+                          <BlueprintEditor />
                         </DashboardLayout>
                       </ProtectedRoute>
                     }

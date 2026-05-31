@@ -12,7 +12,6 @@ const cards = [
     message: 'Not yet created. Start structuring your vision.',
     button: 'Create Blueprint',
     route: '/dashboard/blueprint',
-    comingSoon: true,
   },
   {
     title: 'Find a Match',
