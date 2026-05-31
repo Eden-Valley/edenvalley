@@ -105,6 +105,7 @@ export interface User {
   role: string;
   language: string;
   isValidated: boolean;
+  hasBlueprint: boolean;
   matchStatus: string;
 }
 

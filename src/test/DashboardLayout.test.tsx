@@ -6,7 +6,7 @@ import DashboardLayout from '../components/DashboardLayout';
 
 vi.mock('../contexts/AuthContext', () => ({
   useAuth: () => ({
-    user: { id: '1', email: 'a@b.com', firstName: 'John', lastName: 'Doe', role: 'thinker', language: 'en', isValidated: true, matchStatus: 'unmatched' },
+    user: { id: '1', email: 'a@b.com', firstName: 'John', lastName: 'Doe', role: 'thinker', language: 'en', isValidated: true, hasBlueprint: false, matchStatus: 'unmatched' },
     isAuthenticated: true,
     isLoading: false,
     signOut: vi.fn(),

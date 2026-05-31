@@ -17,6 +17,7 @@ const mockUser = {
   role: 'thinker',
   language: 'en',
   isValidated: true,
+  hasBlueprint: false,
   matchStatus: 'pending',
 };
 
