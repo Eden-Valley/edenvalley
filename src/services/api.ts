@@ -14,6 +14,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     throw new Error(error.error || `HTTP ${response.status}`);
   }
 
+  if (response.status === 204) return null;
   return response.json();
 }
 
@@ -93,5 +94,58 @@ export async function getBackerApplications(token: string) {
 export async function getInvestorApplications(token: string) {
   return fetchApi('/admin/investors', {
     headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export interface TeamMember {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  avatarUrl?: string;
+  joinedAt: string;
+}
+
+export interface InviteRequest {
+  email: string;
+  role: string;
+}
+
+export async function fetchTeam(): Promise<TeamMember[]> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/team', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function inviteTeamMember(data: InviteRequest): Promise<TeamMember> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/team/invite', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${userId}` },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function removeTeamMember(memberId: string): Promise<void> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/team/${memberId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+
+export async function updateTeamMemberRole(memberId: string, role: string): Promise<TeamMember> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/team/${memberId}/role`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${userId}` },
+    body: JSON.stringify({ role }),
   });
 }
