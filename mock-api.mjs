@@ -92,6 +92,63 @@ const server = createServer((req, res) => {
     return;
   }
 
+// In-memory match state
+const matches = {};
+
+if (pathname === '/api/match/status' && method === 'GET') {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
+  const userId = auth.split(' ')[1];
+  const m = matches[userId];
+  res.writeHead(200);
+  res.end(JSON.stringify(m || { status: 'unmatched' }));
+  return;
+}
+
+if (pathname === '/api/match/suggestions' && method === 'GET') {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
+  const userId = auth.split(' ')[1];
+  // Don't suggest the current user
+  const suggestions = [
+    { id: 'sug-1', userId: 'user-2', firstName: 'Jane', lastName: 'Doe', role: 'doer', skills: ['React', 'Node.js', 'PostgreSQL'], vision: 'I want to build AI-powered education tools that adapt to each student.', matchScore: 88 },
+    { id: 'sug-2', userId: 'user-3', firstName: 'Alex', lastName: 'Chen', role: 'thinker', skills: ['Product Design', 'Strategy', 'Marketing'], vision: 'Transforming how remote teams collaborate creatively.', matchScore: 76 },
+  ];
+  res.writeHead(200);
+  res.end(JSON.stringify(suggestions));
+  return;
+}
+
+if (pathname.startsWith('/api/match/request/') && method === 'POST') {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
+  const userId = auth.split(' ')[1];
+  matches[userId] = { status: 'pending' };
+  res.writeHead(200);
+  res.end(JSON.stringify(matches[userId]));
+  return;
+}
+
+if (pathname.startsWith('/api/match/accept/') && method === 'POST') {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
+  const userId = auth.split(' ')[1];
+  matches[userId] = { status: 'matched', match: { id: 'match-1', userId: 'user-2', firstName: 'Jane', lastName: 'Doe', role: 'doer', skills: ['React'], vision: 'Building the future' } };
+  res.writeHead(200);
+  res.end(JSON.stringify(matches[userId]));
+  return;
+}
+
+if (pathname.startsWith('/api/match/decline/') && method === 'POST') {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
+  const userId = auth.split(' ')[1];
+  matches[userId] = { status: 'unmatched' };
+  res.writeHead(200);
+  res.end(JSON.stringify(matches[userId]));
+  return;
+}
+
   res.writeHead(404);
   res.end(JSON.stringify({ error: 'Not found' }));
 });
