@@ -9,7 +9,7 @@ interface MatchProfileCardProps {
 }
 
 function MatchProfileCard({ profile, onRequest }: MatchProfileCardProps) {
-  const initials = profile.firstName[0] + profile.lastName[0];
+  const initials = (profile.firstName[0] ?? '') + (profile.lastName[0] ?? '');
   return (
     <div className="rounded-sm border border-primary/10 bg-background p-4">
       <div className="flex items-start gap-3">
