@@ -97,123 +97,55 @@ export async function getInvestorApplications(token: string) {
   });
 }
 
-export interface User {
+export interface TeamMember {
   id: string;
-  email: string;
+  userId: string;
   firstName: string;
   lastName: string;
   role: string;
-  language: string;
-  isValidated: boolean;
-  hasBlueprint: boolean;
-  matchStatus: string;
+  avatarUrl?: string;
+  joinedAt: string;
 }
 
-export interface BlueprintCard {
-  id: string;
-  title: string;
-  content: string;
-  order: number;
+export interface InviteRequest {
+  email: string;
+  role: string;
 }
 
-export interface Blueprint {
-  id: string;
-  userId: string;
-  cards: BlueprintCard[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface MatchProfile {
-  id: string;
-  userId: string;
-  firstName: string;
-  lastName: string;
-  role: 'thinker' | 'doer';
-  skills: string[];
-  vision: string;
-  matchScore?: number;
-}
-
-export interface MatchStatus {
-  status: 'unmatched' | 'pending' | 'matched';
-  match?: MatchProfile;
-}
-
-export async function fetchMatchStatus(): Promise<MatchStatus> {
+export async function fetchTeam(): Promise<TeamMember[]> {
   const userId = localStorage.getItem('eden-user-id');
   if (!userId) throw new Error('Not authenticated');
-  return fetchApi('/match/status', {
+  return fetchApi('/team', {
     headers: { Authorization: `Bearer ${userId}` },
   });
 }
 
-export async function fetchMatchSuggestions(): Promise<MatchProfile[]> {
+export async function inviteTeamMember(data: InviteRequest): Promise<TeamMember> {
   const userId = localStorage.getItem('eden-user-id');
   if (!userId) throw new Error('Not authenticated');
-  return fetchApi('/match/suggestions', {
-    headers: { Authorization: `Bearer ${userId}` },
-  });
-}
-
-export async function requestMatch(targetUserId: string): Promise<MatchStatus> {
-  const userId = localStorage.getItem('eden-user-id');
-  if (!userId) throw new Error('Not authenticated');
-  return fetchApi(`/match/request/${targetUserId}`, {
+  return fetchApi('/team/invite', {
     method: 'POST',
     headers: { Authorization: `Bearer ${userId}` },
+    body: JSON.stringify(data),
   });
 }
 
-export async function acceptMatch(matchId: string): Promise<MatchStatus> {
+export async function removeTeamMember(memberId: string): Promise<void> {
   const userId = localStorage.getItem('eden-user-id');
   if (!userId) throw new Error('Not authenticated');
-  return fetchApi(`/match/accept/${matchId}`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${userId}` },
-  });
-}
-
-export async function declineMatch(matchId: string): Promise<void> {
-  const userId = localStorage.getItem('eden-user-id');
-  if (!userId) throw new Error('Not authenticated');
-  return fetchApi(`/match/decline/${matchId}`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${userId}` },
-  });
-}
-
-export async function fetchMe(): Promise<User> {
-  const userId = localStorage.getItem('eden-user-id');
-  if (!userId) throw new Error('Not authenticated');
-  return fetchApi('/me', {
-    headers: { Authorization: `Bearer ${userId}` },
-  });
-}
-
-export async function fetchBlueprint(): Promise<Blueprint> {
-  const userId = localStorage.getItem('eden-user-id');
-  if (!userId) throw new Error('Not authenticated');
-  return fetchApi('/blueprint', {
-    headers: { Authorization: `Bearer ${userId}` },
-  });
-}
-
-export async function saveBlueprint(cards: Omit<BlueprintCard, 'id'>[]): Promise<Blueprint> {
-  const userId = localStorage.getItem('eden-user-id');
-  if (!userId) throw new Error('Not authenticated');
-  return fetchApi('/blueprint', {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${userId}` },
-    body: JSON.stringify({ cards }),
-  });
-}
-
-export async function deleteBlueprintCard(cardId: string): Promise<void> {
-  const userId = localStorage.getItem('eden-user-id');
-  if (!userId) throw new Error('Not authenticated');
-  return fetchApi(`/blueprint/cards/${cardId}`, {
+  return fetchApi(`/team/${memberId}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+
+export async function updateTeamMemberRole(memberId: string, role: string): Promise<TeamMember> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/team/${memberId}/role`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${userId}` },
+    body: JSON.stringify({ role }),
   });
 }
