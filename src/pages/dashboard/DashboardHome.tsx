@@ -19,7 +19,6 @@ const cards = [
     message: 'No match yet. Explore potential co-founders.',
     button: 'Find Co-founder',
     route: '/dashboard/match',
-    comingSoon: true,
   },
   {
     title: 'Your Team',

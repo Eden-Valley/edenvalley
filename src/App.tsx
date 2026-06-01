@@ -28,6 +28,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import DashboardHome from "@/pages/dashboard/DashboardHome";
 import BlueprintEditor from "@/pages/dashboard/BlueprintEditor";
+import Match from "@/pages/dashboard/Match";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,16 @@ const App = () => {
                       <ProtectedRoute>
                         <DashboardLayout>
                           <BlueprintEditor />
+                        </DashboardLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/match"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardLayout>
+                          <Match />
                         </DashboardLayout>
                       </ProtectedRoute>
                     }
