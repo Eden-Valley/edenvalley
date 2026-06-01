@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import MatchStatusCard from '@/components/MatchStatusCard';
 import MatchProfileCard from '@/components/MatchProfileCard';
 import { fetchMatchStatus, fetchMatchSuggestions, requestMatch, type MatchProfile } from '@/services/api';
@@ -8,17 +8,30 @@ function Match() {
   const [matchedProfile, setMatchedProfile] = useState<MatchProfile | undefined>();
   const [suggestions, setSuggestions] = useState<MatchProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [statusData, suggestionsData] = await Promise.all([
+        fetchMatchStatus(),
+        fetchMatchSuggestions(),
+      ]);
+      setStatus(statusData.status);
+      setMatchedProfile(statusData.match);
+      setSuggestions(suggestionsData);
+    } catch (err) {
+      console.error('Failed to load match data:', err);
+      setError('Something went wrong loading your matches.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    Promise.all([fetchMatchStatus(), fetchMatchSuggestions()])
-      .then(([statusData, suggestionsData]) => {
-        setStatus(statusData.status);
-        setMatchedProfile(statusData.match);
-        setSuggestions(suggestionsData);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+    loadData();
+  }, [loadData]);
 
   const handleRequest = async (targetUserId: string) => {
     try {
@@ -26,7 +39,9 @@ function Match() {
       setStatus(result.status);
       setMatchedProfile(result.match);
       setSuggestions([]);
-    } catch {}
+    } catch (err) {
+      console.error('Failed to request match:', err);
+    }
   };
 
   if (loading) {
@@ -37,10 +52,27 @@ function Match() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">Find a Match</h1>
+        <div className="rounded-sm border border-destructive/20 bg-destructive/5 p-4">
+          <p className="font-body text-sm text-destructive">{error}</p>
+          <button
+            onClick={loadData}
+            className="mt-2 text-xs text-primary hover:underline"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">Find a Match</h1>
-      <MatchStatusCard status={status} match={matchedProfile} onFindMatch={() => {}} />
+      <MatchStatusCard status={status} match={matchedProfile} onFindMatch={loadData} />
       {status === 'unmatched' && suggestions.length > 0 && (
         <div className="space-y-3">
           <h2 className="font-display text-sm font-medium text-foreground">Suggested Matches</h2>
