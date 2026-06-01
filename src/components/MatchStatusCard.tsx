@@ -38,13 +38,19 @@ function MatchStatusCard({ status, match, onFindMatch }: MatchStatusCardProps) {
     );
   }
 
+  const roleLabel: Record<string, string> = { thinker: 'Thinker', doer: 'Doer' };
+
   return (
     <div className="rounded-sm border border-primary/10 bg-background p-5">
       <div className="flex items-start gap-4">
         <div className="bg-green-500/10 p-2 rounded-sm"><CheckCircle className="h-5 w-5 text-green-500" /></div>
         <div>
-          <h3 className="font-display text-sm font-medium text-foreground mb-1">Matched with {match?.firstName} {match?.lastName}</h3>
-          <p className="font-body text-xs text-muted-foreground">You're connected as {match?.role === 'doer' ? 'Doer' : 'Thinker'}.</p>
+          <h3 className="font-display text-sm font-medium text-foreground mb-1">
+            {match ? `Matched with ${match.firstName} ${match.lastName}` : 'Matched with a co-founder'}
+          </h3>
+          <p className="font-body text-xs text-muted-foreground">
+            You're connected as {match ? (roleLabel[match.role] ?? 'Co-founder') : 'Co-founder'}.
+          </p>
         </div>
       </div>
     </div>
