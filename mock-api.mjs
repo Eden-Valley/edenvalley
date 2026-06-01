@@ -95,7 +95,7 @@ const server = createServer((req, res) => {
 // In-memory match state
 const matches = {};
 
-if (pathname === '/api/match/status' && method === 'GET') {
+if (pathname === '/api/match/status' && req.method === 'GET') {
   const auth = req.headers.authorization;
   if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
   const userId = auth.split(' ')[1];
@@ -105,7 +105,7 @@ if (pathname === '/api/match/status' && method === 'GET') {
   return;
 }
 
-if (pathname === '/api/match/suggestions' && method === 'GET') {
+if (pathname === '/api/match/suggestions' && req.method === 'GET') {
   const auth = req.headers.authorization;
   if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
   const userId = auth.split(' ')[1];
@@ -119,7 +119,7 @@ if (pathname === '/api/match/suggestions' && method === 'GET') {
   return;
 }
 
-if (pathname.startsWith('/api/match/request/') && method === 'POST') {
+if (pathname.startsWith('/api/match/request/') && req.method === 'POST') {
   const auth = req.headers.authorization;
   if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
   const userId = auth.split(' ')[1];
@@ -129,7 +129,7 @@ if (pathname.startsWith('/api/match/request/') && method === 'POST') {
   return;
 }
 
-if (pathname.startsWith('/api/match/accept/') && method === 'POST') {
+if (pathname.startsWith('/api/match/accept/') && req.method === 'POST') {
   const auth = req.headers.authorization;
   if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
   const userId = auth.split(' ')[1];
@@ -139,7 +139,7 @@ if (pathname.startsWith('/api/match/accept/') && method === 'POST') {
   return;
 }
 
-if (pathname.startsWith('/api/match/decline/') && method === 'POST') {
+if (pathname.startsWith('/api/match/decline/') && req.method === 'POST') {
   const auth = req.headers.authorization;
   if (!auth?.startsWith('Bearer ')) { res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
   const userId = auth.split(' ')[1];

@@ -35,12 +35,14 @@ function Match() {
 
   const handleRequest = async (targetUserId: string) => {
     try {
+      setError(null);
       const result = await requestMatch(targetUserId);
       setStatus(result.status);
       setMatchedProfile(result.match);
       setSuggestions([]);
     } catch (err) {
       console.error('Failed to request match:', err);
+      setError('Failed to send match request. Please try again.');
     }
   };
 

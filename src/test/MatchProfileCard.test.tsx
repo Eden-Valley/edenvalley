@@ -4,8 +4,8 @@ import MatchProfileCard from '../components/MatchProfileCard';
 import type { MatchProfile } from '@/services/api';
 
 const profile: MatchProfile = {
-  id: '2',
-  userId: '2',
+  id: 'profile-2',
+  userId: 'user-2',
   firstName: 'Jane',
   lastName: 'Doe',
   role: 'doer',
@@ -36,7 +36,7 @@ describe('MatchProfileCard', () => {
     const onRequest = vi.fn();
     render(<MatchProfileCard profile={profile} onRequest={onRequest} />);
     screen.getByRole('button', { name: /request match/i }).click();
-    expect(onRequest).toHaveBeenCalledWith('2');
+    expect(onRequest).toHaveBeenCalledWith('user-2');
   });
 
   it('renders initials in avatar', () => {

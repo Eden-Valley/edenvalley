@@ -31,7 +31,7 @@ function MatchProfileCard({ profile, onRequest }: MatchProfileCardProps) {
             ))}
           </div>
         </div>
-        <Button size="sm" variant="outline" className="shrink-0" onClick={() => onRequest(profile.id)}>
+        <Button size="sm" variant="outline" className="shrink-0" onClick={() => onRequest(profile.userId)}>
           Request Match
         </Button>
       </div>
