@@ -50,7 +50,7 @@ const Auth = () => {
       localStorage.setItem('eden-email', data.email);
       
       setTimeout(() => {
-        navigate('/');
+        navigate('/dashboard');
       }, 2000);
     } catch {
       setTokenError('Failed to verify token. Please try again.');
@@ -94,7 +94,7 @@ const Auth = () => {
       }
 
       setLoading(false);
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       setError('Unable to connect. Please try again.');
       setLoading(false);

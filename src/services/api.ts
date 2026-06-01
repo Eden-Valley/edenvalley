@@ -14,6 +14,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     throw new Error(error.error || `HTTP ${response.status}`);
   }
 
+  if (response.status === 204) return null;
   return response.json();
 }
 
@@ -93,5 +94,126 @@ export async function getBackerApplications(token: string) {
 export async function getInvestorApplications(token: string) {
   return fetchApi('/admin/investors', {
     headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  language: string;
+  isValidated: boolean;
+  hasBlueprint: boolean;
+  matchStatus: string;
+}
+
+export interface BlueprintCard {
+  id: string;
+  title: string;
+  content: string;
+  order: number;
+}
+
+export interface Blueprint {
+  id: string;
+  userId: string;
+  cards: BlueprintCard[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MatchProfile {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  role: 'thinker' | 'doer';
+  skills: string[];
+  vision: string;
+  matchScore?: number;
+}
+
+export interface MatchStatus {
+  status: 'unmatched' | 'pending' | 'matched';
+  match?: MatchProfile;
+}
+
+export async function fetchMatchStatus(): Promise<MatchStatus> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/match/status', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function fetchMatchSuggestions(): Promise<MatchProfile[]> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/match/suggestions', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function requestMatch(targetUserId: string): Promise<MatchStatus> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/match/request/${targetUserId}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function acceptMatch(matchId: string): Promise<MatchStatus> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/match/accept/${matchId}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function declineMatch(matchId: string): Promise<void> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/match/decline/${matchId}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function fetchMe(): Promise<User> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/me', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function fetchBlueprint(): Promise<Blueprint> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/blueprint', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function saveBlueprint(cards: Omit<BlueprintCard, 'id'>[]): Promise<Blueprint> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/blueprint', {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${userId}` },
+    body: JSON.stringify({ cards }),
+  });
+}
+
+export async function deleteBlueprintCard(cardId: string): Promise<void> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/blueprint/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${userId}` },
   });
 }

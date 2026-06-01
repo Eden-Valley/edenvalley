@@ -23,6 +23,12 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import CustomCursor from "@/components/CustomCursor";
 import GoFundMeWidget from "@/components/GoFundMeWidget";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import DashboardLayout from "@/components/DashboardLayout";
+import DashboardHome from "@/pages/dashboard/DashboardHome";
+import BlueprintEditor from "@/pages/dashboard/BlueprintEditor";
+import Match from "@/pages/dashboard/Match";
 
 const queryClient = new QueryClient();
 
@@ -55,24 +61,56 @@ const App = () => {
             
             {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/role" element={<RoleChoice />} />
-                <Route path="/test" element={<FounderTest />} />
-                <Route path="/result/thinker" element={<ResultPage type="thinker" />} />
-                <Route path="/result/doer" element={<ResultPage type="doer" />} />
-                <Route path="/thanks" element={<Thanks />} />
-                <Route path="/funder" element={<Funder />} />
-                <Route path="/funder-thanks" element={<FunderThanks />} />
-                <Route path="/thinker" element={<Thinker />} />
-                <Route path="/doer" element={<Doer />} />
-                <Route path="/fund" element={<FundBridge />} />
-                <Route path="/fund/crowd" element={<FundCrowd />} />
-                <Route path="/fund/pro" element={<FundPro />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AuthProvider>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/role" element={<RoleChoice />} />
+                  <Route path="/test" element={<FounderTest />} />
+                  <Route path="/result/thinker" element={<ResultPage type="thinker" />} />
+                  <Route path="/result/doer" element={<ResultPage type="doer" />} />
+                  <Route path="/thanks" element={<Thanks />} />
+                  <Route path="/funder" element={<Funder />} />
+                  <Route path="/funder-thanks" element={<FunderThanks />} />
+                  <Route path="/thinker" element={<Thinker />} />
+                  <Route path="/doer" element={<Doer />} />
+                  <Route path="/fund" element={<FundBridge />} />
+                  <Route path="/fund/crowd" element={<FundCrowd />} />
+                  <Route path="/fund/pro" element={<FundPro />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardLayout>
+                          <DashboardHome />
+                        </DashboardLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/blueprint"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardLayout>
+                          <BlueprintEditor />
+                        </DashboardLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/match"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardLayout>
+                          <Match />
+                        </DashboardLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AuthProvider>
             </BrowserRouter>
             
             {/* GoFundMe Campaign - Fixed position above Product Hunt */}
