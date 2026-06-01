@@ -26,7 +26,6 @@ const cards = [
     message: 'Build your team after finding a match.',
     button: 'Manage Team',
     route: '/dashboard/team',
-    comingSoon: true,
   },
   {
     title: 'Funding',

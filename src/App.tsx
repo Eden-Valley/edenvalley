@@ -6,6 +6,9 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AudioProvider } from "@/hooks/AudioContext";
 import { Analytics } from "@vercel/analytics/react";
 import LoadingScreen from "@/components/LoadingScreen";
+import DashboardLayout from "@/pages/dashboard/DashboardLayout";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Team from "@/pages/dashboard/Team";
 import Home from "./pages/Home";
 import RoleChoice from "./pages/RoleChoice";
 import FounderTest from "./pages/FounderTest";
@@ -61,6 +64,7 @@ const App = () => {
             
             {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+<<<<<<< HEAD
               <AuthProvider>
                 <Routes>
                   <Route path="/" element={<Home />} />
@@ -104,6 +108,16 @@ const App = () => {
                       <ProtectedRoute>
                         <DashboardLayout>
                           <Match />
+                        </DashboardLayout>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/dashboard/team"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardLayout>
+                          <Team />
                         </DashboardLayout>
                       </ProtectedRoute>
                     }
