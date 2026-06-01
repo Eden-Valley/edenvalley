@@ -124,6 +124,65 @@ export interface Blueprint {
   updatedAt: string;
 }
 
+export interface MatchProfile {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  role: 'thinker' | 'doer';
+  skills: string[];
+  vision: string;
+  matchScore?: number;
+}
+
+export interface MatchStatus {
+  status: 'unmatched' | 'pending' | 'matched';
+  match?: MatchProfile;
+}
+
+export async function fetchMatchStatus(): Promise<MatchStatus> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/match/status', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function fetchMatchSuggestions(): Promise<MatchProfile[]> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi('/match/suggestions', {
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function requestMatch(targetUserId: string): Promise<MatchStatus> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/match/request/${targetUserId}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function acceptMatch(matchId: string): Promise<MatchStatus> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/match/accept/${matchId}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
+export async function declineMatch(matchId: string): Promise<void> {
+  const userId = localStorage.getItem('eden-user-id');
+  if (!userId) throw new Error('Not authenticated');
+  return fetchApi(`/match/decline/${matchId}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${userId}` },
+  });
+}
+
 export async function fetchMe(): Promise<User> {
   const userId = localStorage.getItem('eden-user-id');
   if (!userId) throw new Error('Not authenticated');
